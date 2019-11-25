@@ -14,9 +14,16 @@ public:
   Player();
 
   void keyPressEvent(QKeyEvent * event);
+  void keyReleaseEvent(QKeyEvent * event);
+
+public slots:
+  void move();
 
 private:
   std::size_t points;
+  std::size_t width, height;
+  qreal speedX, speedY;
+  bool isRight, isLeft, isUp;
   QTimer * timer;
 };
 

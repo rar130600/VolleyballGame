@@ -7,9 +7,6 @@
 #include <player.h>
 #include <ball.h>
 
-const qreal GRAVITY = 1.85;
-const qreal DRAG = 0.9;
-
 int main(int argc, char * argv[])
 {
   QApplication volleyball(argc, argv);

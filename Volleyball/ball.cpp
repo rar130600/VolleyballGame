@@ -1,12 +1,14 @@
 #include "ball.h"
 
-Ball::Ball()
-{
-  speedX = 10.0;
-  speedY = 0.0;
-  diameter = 50;
+#include "config.h"
 
+Ball::Ball() :
+  speedX(0.0),
+  speedY(0.0),
+  diameter(50)
+{
   setRect(0, 0, diameter, diameter);
+  setPos(Config::SCREEN_WIDTH / 2 - diameter / 2, Config::SCREEN_HEIGHT / 4);
 
   timer = new QTimer();
   connect(timer, SIGNAL(timeout()), this, SLOT(move()));
@@ -18,15 +20,15 @@ void Ball::move()
   qreal oldY = y();
   qreal oldX = x();
 
-  speedY -= GRAVITY;
+  speedY -= Config::GRAVITY;
 
   setPos(x() + speedX, y() - speedY);
 
-  if (y() + diameter > 600 - 5)
+  if (y() + diameter > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
   {
     setPos(x(), oldY);
-    speedY = -speedY * DRAG;
-    speedX = speedX * DRAG;
+    speedY = -speedY * Config::DRAG;
+    speedX = speedX * Config::DRAG;
   }
 
   if (x() < 0)
@@ -35,7 +37,7 @@ void Ball::move()
     speedX = - speedX;
   }
 
-  if (x() + diameter > 800)
+  if (x() + diameter > Config::SCREEN_WIDTH)
   {
     setPos(oldX, y());
     speedX = - speedX;

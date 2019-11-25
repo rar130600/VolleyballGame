@@ -5,9 +5,6 @@
 #include <QObject>
 #include <QTimer>
 
-const qreal GRAVITY = 1.85;
-const qreal DRAG = 0.9;
-
 class Ball : public QObject, public QGraphicsEllipseItem
 {
   Q_OBJECT

@@ -1,5 +1,7 @@
 #include <game.h>
 
+#include <config.h>
+
 Game::Game()
 {
   scene = new QGraphicsScene();
@@ -8,6 +10,6 @@ Game::Game()
   view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-  view->setFixedSize(800, 600);
-  scene->setSceneRect(0, 0, 800, 600);
+  view->setFixedSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
+  scene->setSceneRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
 }

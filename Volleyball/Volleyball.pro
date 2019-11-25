@@ -23,6 +23,7 @@ SOURCES += \
 
 HEADERS += \
   ball.h \
+  config.h \
   game.h \
   player.h
 

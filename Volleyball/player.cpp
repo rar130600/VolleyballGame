@@ -1,11 +1,23 @@
 #include <player.h>
 
+#include <config.h>
 
-Player::Player()
+Player::Player() :
+  points(0),
+  width(50),
+  height(50),
+  speedX(0.0),
+  speedY(0.0),
+  isRight(false),
+  isLeft(false),
+  isUp(false)
 {
-  points = 0;
-  setRect(0, 0, 50, 50);
+  setRect(0, 0, width, height);
+  setPos(Config::SCREEN_WIDTH / 4 - width / 2, Config::SCREEN_HEIGHT - height - Config::BOTTOM_INDENT);
+
   timer = new QTimer();
+  connect(timer, SIGNAL(timeout()), this, SLOT(move()));
+  timer->start(Config::TIME);
 }
 
 void Player::keyPressEvent(QKeyEvent * event)
@@ -13,17 +25,73 @@ void Player::keyPressEvent(QKeyEvent * event)
   switch(event->key())
   {
   case Qt::Key_Left:
-    setPos(x() - 10, y());
+    isLeft = true;
     break;
   case Qt::Key_Right:
-    setPos(x() + 10, y());
+    isRight = true;
     break;
   case Qt::Key_Up:
-    setPos(x(), y() - 10);
-    break;
-  case Qt::Key_Down:
-    setPos(x(), y() + 10);
+    isUp = true;
     break;
   }
+}
 
+void Player::keyReleaseEvent(QKeyEvent * event)
+{
+  switch (event->key())
+  {
+  case Qt::Key_Left:
+    isLeft = false;
+    break;
+  case Qt::Key_Right:
+    isRight = false;
+    break;
+  }
+}
+
+void Player::move()
+{
+  qreal oldY = y();
+  qreal oldX = x();
+
+  speedY -= Config::GRAVITY;
+
+  if (isLeft)
+  {
+    speedX = -Config::GRAVITY * 7;
+  }
+  if (isRight)
+  {
+    speedX = Config::GRAVITY * 7;
+  }
+  if (isUp)
+  {
+    speedY = 30.0;
+    isUp = false;
+  }
+
+  setPos(x() + speedX, y() - speedY);
+
+  if (speedX < 0)
+  {
+    speedX += Config::GRAVITY;
+  }
+  else if (speedX > 0)
+  {
+    speedX -= Config::GRAVITY;
+  }
+
+  if (y() + height > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
+  {
+    setPos(x(), oldY);
+  }
+
+  if (x() < 0)
+  {
+    setPos(oldX, y());
+  }
+  if (x() + width > Config::SCREEN_WIDTH)
+  {
+    setPos(oldX, y());
+  }
 }
