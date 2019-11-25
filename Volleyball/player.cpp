@@ -15,6 +15,8 @@ Player::Player() :
   setRect(0, 0, width, height);
   setPos(Config::SCREEN_WIDTH / 4 - width / 2, Config::SCREEN_HEIGHT - height - Config::BOTTOM_INDENT);
 
+  setFlag(QGraphicsItem::ItemIsFocusable);
+
   timer = new QTimer();
   connect(timer, SIGNAL(timeout()), this, SLOT(move()));
   timer->start(Config::TIME);
@@ -31,7 +33,10 @@ void Player::keyPressEvent(QKeyEvent * event)
     isRight = true;
     break;
   case Qt::Key_Up:
-    isUp = true;
+    if (y() >= Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height)
+    {
+      isUp = true;
+    }
     break;
   }
 }

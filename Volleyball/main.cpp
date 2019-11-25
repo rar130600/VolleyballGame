@@ -15,15 +15,14 @@ int main(int argc, char * argv[])
   Game * game = new Game();
 
   Player * player1 = new Player();
-  player1->setFlag(QGraphicsItem::ItemIsFocusable);
   player1->setFocus();
 
   Ball * ball = new Ball();
 
-  game->scene->addItem(player1);
-  game->scene->addItem(ball);
+  game->addItem(player1);
+  game->addItem(ball);
 
-  game->view->show();
+  game->viewShow();
 
   return volleyball.exec();
 }
