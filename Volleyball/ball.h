@@ -11,10 +11,6 @@ class Ball : public QObject, public QGraphicsEllipseItem
 {
   Q_OBJECT
 public:
-  qreal speedX, speedY;
-  int diameter;
-  QTimer * timer;
-
   Ball();
 
   void move();
@@ -23,6 +19,10 @@ public:
 public slots:
   void tick();
 
+private:
+  qreal speedX, speedY;
+  int diameter;
+  QTimer * timer;
 };
 
 #endif // BALL_H

@@ -16,7 +16,7 @@ Game::Game()
   view->setFixedSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
   scene->setSceneRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
 
-  timer->start(24);
+  timer->start(Config::TIME);
 }
 
 void Game::addItem(QGraphicsItem * item)

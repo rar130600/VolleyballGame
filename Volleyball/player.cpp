@@ -3,18 +3,18 @@
 #include <config.h>
 #include "ball.h"
 #include <QDebug>
-#include <cmath>
+#include <QBrush>
 
 Player::Player() :
-  points(0),
-  width(50),
-  height(50),
+  width(Config::PLAYER_WIDTH),
+  height(Config::PLAYER_HEIGHT),
   speedX(0.0),
   speedY(0.0),
   isRight(false),
   isLeft(false),
   isUp(false)
 {
+  setBrush(QBrush(Qt::darkGray));
   setRect(0, 0, width, height);
   setPos(Config::SCREEN_WIDTH / 4 - width / 2, Config::SCREEN_HEIGHT - height - Config::BOTTOM_INDENT);
 
@@ -62,19 +62,19 @@ void Player::move()
   qreal oldY = y();
   qreal oldX = x();
 
-  speedY -= Config::GRAVITY;
+  speedY -= Config::GRAVITY * 2;
 
   if (isLeft)
   {
-    speedX = -Config::GRAVITY * 7;
+    speedX = -Config::GRAVITY * 16;
   }
   if (isRight)
   {
-    speedX = Config::GRAVITY * 7;
+    speedX = Config::GRAVITY * 16;
   }
   if (isUp)
   {
-    speedY = Config::GRAVITY * 21;
+    speedY = Config::GRAVITY * 56;
     isUp = false;
   }
 
@@ -123,12 +123,12 @@ void Player::colliding()
   }
 }
 
-qreal Player::getSpeedX()
+qreal Player::getSpeedX() const
 {
   return speedX;
 }
 
-qreal Player::getSpeedY()
+qreal Player::getSpeedY() const
 {
   return speedY;
 }

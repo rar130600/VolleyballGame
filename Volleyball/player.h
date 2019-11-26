@@ -18,14 +18,13 @@ public:
   void move();
   void colliding();
 
-  qreal getSpeedX();
-  qreal getSpeedY();
+  qreal getSpeedX() const;
+  qreal getSpeedY() const;
 
 public slots:
   void tick();
 
-public:
-  std::size_t points;
+private:
   std::size_t width, height;
   qreal speedX, speedY;
   bool isRight, isLeft, isUp;

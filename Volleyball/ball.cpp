@@ -5,18 +5,20 @@
 #include <QDebug>
 #include <cmath>
 #include <math.h>
+#include <QBrush>
 
 Ball::Ball() :
   speedX(0.0),
   speedY(0.0),
-  diameter(50)
+  diameter(Config::PLAYER_WIDTH)
 {
+  setBrush(QBrush(Qt::yellow));
   setRect(0, 0, diameter, diameter);
   setPos(Config::SCREEN_WIDTH / 2 - diameter / 2, Config::SCREEN_HEIGHT / 4);
 
   timer = new QTimer();
   connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
-  timer->start(24);
+  timer->start(Config::TIME);
 }
 
 void Ball::move()
@@ -24,15 +26,24 @@ void Ball::move()
   qreal oldY = y();
   qreal oldX = x();
 
-  speedY -= Config::GRAVITY;
+  speedY -= Config::GRAVITY / 4;
 
-  if (speedX > Config::MAX_SPEED_X)
+  if (speedX > Config::BALL_MAX_SPEED_X)
   {
-    speedX = Config::MAX_SPEED_X;
+    speedX = Config::BALL_MAX_SPEED_X;
   }
-  else if (speedX < -Config::MAX_SPEED_X)
+  else if (speedX < -Config::BALL_MAX_SPEED_X)
   {
-    speedX = -Config::MAX_SPEED_X;
+    speedX = -Config::BALL_MAX_SPEED_X;
+  }
+
+  if (speedY > Config::BALL_MAX_SPEED_Y)
+  {
+    speedY = Config::BALL_MAX_SPEED_Y;
+  }
+  else if (speedY < -Config::BALL_MAX_SPEED_Y)
+  {
+    speedY = -Config::BALL_MAX_SPEED_Y;
   }
 
   moveBy(speedX, -speedY);
@@ -76,40 +87,55 @@ void Ball::colliding()
       qDebug() << speedX << " " << speedY;
       auto * player = static_cast<Player *>(item);
 
-      if (player->speedX >= 0 && speedX <= 0.0)
+      if (player->getSpeedX() >= 0 && speedX <= 0.0)
       {
-        speedX = -(speedX - 5);
+        speedX = -(speedX - Config::BALL_BOOST_X);
       }
-      if (player->speedX <= 0 && speedX >= 0)
+      if (player->getSpeedX() <= 0 && speedX >= 0)
       {
-        speedX = -(speedX + 5);
+        speedX = -(speedX + Config::BALL_BOOST_X);
       }
-      if (player->speedX >= 0 && speedX >= 0)
+      if (player->getSpeedX() >= 0 && speedX >= 0)
       {
-        speedX += 5;
+        if (player->x() < x())
+        {
+          speedX += Config::BALL_BOOST_X;
+        }
+        else if (player->x() >= x() + diameter)
+        {
+          speedX = -(speedX + Config::BALL_BOOST_X);
+        }
       }
-      if (player->speedX <= 0 && speedX <= 0)
+      if (player->getSpeedX() <= 0 && speedX <= 0)
       {
-        speedX -= 5;
-      }
-
-      if (player->speedY >= 0 && speedY <= 0)
-      {
-        speedY = -(speedY + 5);
-      }
-      if (player->speedY <= 0 && speedY >= 0)
-      {
-        speedY = -(speedY - 5);
-      }
-      if (player->speedY >= 0 && speedY >= 0)
-      {
-        speedY += 5;
-      }
-      if (player->speedY <= 0 && speedY <= 0)
-      {
-        speedY -= 5;
+        if (player->x() >= x() + diameter)
+        {
+          speedX -= Config::BALL_BOOST_X;
+        }
+        else if (player->x() <= x())
+        {
+          speedX = -(speedX - Config::BALL_BOOST_X);
+        }
       }
 
+      if (player->getSpeedY() >= 0 && speedY <= 0)
+      {
+        speedY = -(speedY - Config::BALL_BOOST_Y);
+      }
+      if (player->getSpeedY() <= 0 && speedY >= 0)
+      {
+        speedY = -(speedY + Config::BALL_BOOST_Y);
+      }
+      if (player->getSpeedY() >= 0 && speedY >= 0)
+      {
+        speedY += Config::BALL_BOOST_Y;
+      }
+      if (player->getSpeedY() <= 0 && speedY <= 0)
+      {
+        speedY -= Config::BALL_BOOST_Y;
+      }
+
+       //dont work!
       /*qreal radiusBall = diameter / 2;
       qreal radiusPlayer = player->width / 2;
 

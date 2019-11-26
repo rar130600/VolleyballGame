@@ -5,14 +5,19 @@
 
 struct Config
 {
-  constexpr static qreal GRAVITY = 1.0;
+  constexpr static qreal GRAVITY = 0.5;
   constexpr static qreal DRAG = 0.9;
-  constexpr static qreal MAX_SPEED_X = 15.0;
+  constexpr static qreal BALL_MAX_SPEED_X = 10.0;
+  constexpr static qreal BALL_MAX_SPEED_Y = 10.0;
+  constexpr static qreal BALL_BOOST_X = 5.0;
+  constexpr static qreal BALL_BOOST_Y = 5.0;
+
   constexpr static int TIME = 24;
   constexpr static int BOTTOM_INDENT = 5;
-  constexpr static int SCREEN_WIDTH = 800;
-  constexpr static int SCREEN_HEIGHT = 600;
-
+  constexpr static std::size_t SCREEN_WIDTH = 1200;
+  constexpr static std::size_t SCREEN_HEIGHT = 900;
+  constexpr static std::size_t PLAYER_WIDTH = SCREEN_WIDTH / 16;
+  constexpr static std::size_t PLAYER_HEIGHT = SCREEN_HEIGHT / 12;
 };
 
 #endif // CONFIG_H
