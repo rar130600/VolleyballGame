@@ -1,6 +1,9 @@
 #include <player.h>
 
 #include <config.h>
+#include "ball.h"
+#include <QDebug>
+#include <cmath>
 
 Player::Player() :
   points(0),
@@ -18,7 +21,7 @@ Player::Player() :
   setFlag(QGraphicsItem::ItemIsFocusable);
 
   timer = new QTimer();
-  connect(timer, SIGNAL(timeout()), this, SLOT(move()));
+  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
   timer->start(Config::TIME);
 }
 
@@ -71,11 +74,11 @@ void Player::move()
   }
   if (isUp)
   {
-    speedY = 30.0;
+    speedY = Config::GRAVITY * 21;
     isUp = false;
   }
 
-  setPos(x() + speedX, y() - speedY);
+  moveBy(speedX, -speedY);
 
   if (speedX < 0)
   {
@@ -99,4 +102,39 @@ void Player::move()
   {
     setPos(oldX, y());
   }
+}
+
+void Player::colliding()
+{
+  QList<QGraphicsItem *> colliding_items = collidingItems(Qt::IntersectsItemShape);
+  if (colliding_items.isEmpty())
+  {
+    return;
+  }
+  int n = colliding_items.size();
+  for (int i = 0; i < n; i++)
+  {
+    auto item = colliding_items[i];
+    if (typeid (* item) == typeid (Ball))
+    {
+      //qDebug() << "Colliding " << item->x() << " " << item->y();
+
+    }
+  }
+}
+
+qreal Player::getSpeedX()
+{
+  return speedX;
+}
+
+qreal Player::getSpeedY()
+{
+  return speedY;
+}
+
+void Player::tick()
+{
+  colliding();
+  move();
 }

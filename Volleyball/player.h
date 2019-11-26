@@ -15,11 +15,16 @@ public:
 
   void keyPressEvent(QKeyEvent * event);
   void keyReleaseEvent(QKeyEvent * event);
+  void move();
+  void colliding();
+
+  qreal getSpeedX();
+  qreal getSpeedY();
 
 public slots:
-  void move();
+  void tick();
 
-private:
+public:
   std::size_t points;
   std::size_t width, height;
   qreal speedX, speedY;
