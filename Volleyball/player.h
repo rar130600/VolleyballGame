@@ -7,21 +7,23 @@
 #include <QGraphicsRectItem>
 #include <QKeyEvent>
 
-class Player : public QObject, public QGraphicsRectItem
+class Player : public QObject, public QGraphicsEllipseItem
 {
   Q_OBJECT
 public:
   Player();
 
-  void keyPressEvent(QKeyEvent * event);
-  void keyReleaseEvent(QKeyEvent * event);
+
   void move();
   void colliding();
 
   qreal getSpeedX() const;
   qreal getSpeedY() const;
+
 public slots:
   void tick();
+  void keyPress(QKeyEvent * event);
+  void keyRelease(QKeyEvent * event);
 
 private:
   std::size_t width, height;

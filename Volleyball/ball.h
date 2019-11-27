@@ -15,6 +15,9 @@ public:
 
   void move();
   void colliding();
+signals:
+  void startCalc();
+  void stopCalc();
 
 public slots:
   void tick();

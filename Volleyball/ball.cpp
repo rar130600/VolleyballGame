@@ -20,54 +20,51 @@ Ball::Ball() :
 
 void Ball::move()
 {
-  qreal oldY = y();
-  qreal oldX = x();
-
   speedY -= Config::GRAVITY / 4;
 
-  if (speedX > Config::BALL_MAX_SPEED_X)
+  if (speedX > Config::BALL_X_MAX_SPEED)
   {
-    speedX = Config::BALL_MAX_SPEED_X;
+    speedX = Config::BALL_X_MAX_SPEED;
   }
-  else if (speedX < -Config::BALL_MAX_SPEED_X)
+  else if (speedX < -Config::BALL_X_MAX_SPEED)
   {
-    speedX = -Config::BALL_MAX_SPEED_X;
+    speedX = -Config::BALL_X_MAX_SPEED;
   }
 
-  if (speedY > Config::BALL_MAX_SPEED_Y)
+  if (speedY > Config::BALL_Y_MAX_SPEED)
   {
-    speedY = Config::BALL_MAX_SPEED_Y;
+    speedY = Config::BALL_Y_MAX_SPEED;
   }
-  else if (speedY < -Config::BALL_MAX_SPEED_Y)
+  else if (speedY < -Config::BALL_Y_MAX_SPEED)
   {
-    speedY = -Config::BALL_MAX_SPEED_Y;
+    speedY = -Config::BALL_Y_MAX_SPEED;
   }
 
   moveBy(speedX, -speedY);
 
   if (y() + diameter > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
   {
-    setPos(x(), oldY);
+    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - diameter);
     speedY = -speedY * Config::DRAG;
     speedX = speedX * Config::DRAG;
   }
 
   if (y() < 0)
   {
-    setPos(x(), oldY);
+    setPos(x(), 0);
     speedY = - speedY * Config::DRAG;
     speedX = speedX * Config::DRAG;
   }
 
   if (x() < 0)
   {
-    setPos(oldX, y());
+    setPos(0, y());
     speedX = - speedX * Config::DRAG;
   }
 
   if (x() + diameter > Config::SCREEN_WIDTH)
   {
-    setPos(oldX, y());
+    setPos(Config::SCREEN_WIDTH - diameter, y());
     speedX = - speedX * Config::DRAG;
   }
 }
@@ -81,100 +78,96 @@ void Ball::colliding()
     auto item = colliding_items[i];
     if (typeid(* item) == typeid(Player))
     {
+
       qDebug() << speedX << " " << speedY;
       auto * player = static_cast<Player *>(item);
 
-      if (player->getSpeedX() >= 0 && speedX <= 0.0)
+      qreal dx = x() - player->x();
+      qreal dy = y() - player->y();
+      qreal d = std::sqrt(dx * dx + dy * dy);
+
+      qreal cos = dx / d;
+      qreal sin = dy / d;
+
+      qreal vn1 = player->getSpeedX() * cos + player->getSpeedY() * sin;
+      qreal vn2 = speedX * cos + speedY * sin;
+      qreal vt2 = speedX * sin + speedY * cos;
+
+      qreal newVn2 = vn1 - vn2;
+
+      speedX = newVn2 * cos - vt2 * sin;
+      speedY = newVn2 * sin + vt2 * cos;
+
+      if (player->getSpeedY() <= 0)
       {
-        speedX = -(speedX - Config::BALL_BOOST_X);
+        speedY = - speedY;
+      }
+
+      qreal radiusPlayer = Config::PLAYER_WIDTH / 2;
+      qreal radiusBall = diameter / 2;
+
+      if (radiusPlayer + radiusBall > d)
+      {
+        moveBy(dx / 3, dy / 3);
+        if (x() < 0 || x() + diameter > Config::SCREEN_WIDTH)
+        {
+          moveBy(-dx / 3, 0);
+          speedX += -dx / 3;
+        }
+        if (y() + diameter > Config::SCREEN_HEIGHT + Config::BOTTOM_INDENT)
+        {
+          moveBy(0, -dy / 3);
+          speedY += -dy / 3;
+        }
+      }
+
+      // does not work well
+      /*if (player->getSpeedX() >= 0 && speedX <= 0.0)
+      {
+        speedX = -(speedX - Config::BALL_BOOST_X - player->getSpeedX());
       }
       if (player->getSpeedX() <= 0 && speedX >= 0)
       {
-        speedX = -(speedX + Config::BALL_BOOST_X);
+        speedX = -(speedX + Config::BALL_BOOST_X + player->getSpeedX());
       }
       if (player->getSpeedX() >= 0 && speedX >= 0)
       {
         if (player->x() < x())
         {
-          speedX += Config::BALL_BOOST_X;
+          speedX += (Config::BALL_BOOST_X + player->getSpeedX());
         }
         else if (player->x() >= x() + diameter)
         {
-          speedX = -(speedX + Config::BALL_BOOST_X);
+          speedX = -(speedX + Config::BALL_BOOST_X + player->getSpeedX());
         }
       }
       if (player->getSpeedX() <= 0 && speedX <= 0)
       {
         if (player->x() >= x() + diameter)
         {
-          speedX -= Config::BALL_BOOST_X;
+          speedX -= (Config::BALL_BOOST_X + player->getSpeedX());
         }
         else if (player->x() <= x())
         {
-          speedX = -(speedX - Config::BALL_BOOST_X);
+          speedX = -(speedX - Config::BALL_BOOST_X - player->getSpeedX());
         }
       }
 
       if (player->getSpeedY() >= 0 && speedY <= 0)
       {
-        speedY = -(speedY - Config::BALL_BOOST_Y);
+        speedY = -(speedY - Config::BALL_BOOST_Y - player->getSpeedY());
       }
       if (player->getSpeedY() <= 0 && speedY >= 0)
       {
-        speedY = -(speedY + Config::BALL_BOOST_Y);
+        speedY = -(speedY + Config::BALL_BOOST_Y + player->getSpeedY());
       }
-      if (player->getSpeedY() >= 0 && speedY >= 0)
+      if (player->getSpeedY() > 0 && speedY >= 0)
       {
-        speedY += Config::BALL_BOOST_Y;
+        speedY += (Config::BALL_BOOST_Y + player->getSpeedY());
       }
-      if (player->getSpeedY() <= 0 && speedY <= 0)
+      if (player->getSpeedY() < 0 && speedY <= 0)
       {
-        speedY -= Config::BALL_BOOST_Y;
-      }
-
-       //dont work!
-      /*qreal radiusBall = diameter / 2;
-      qreal radiusPlayer = player->width / 2;
-
-      qreal dx = (x() + radiusBall) - (player->x() + radiusPlayer);
-      qreal dy = (y() + radiusBall) - (player->y() + radiusPlayer);
-      qreal distance = sqrt(dx*dx + dy*dy);
-
-      qreal angle = atan2(dy, dx);
-
-//      speedX = (cos(angle) * speedX) + (dy/distance);
-//      speedY = (sin(angle) * speedY) + (dx/distance);
-      if (distance == 0) {distance = 0.01;}
-
-      qreal ax = dx/distance;
-      qreal ay = dy/distance;
-
-      if (distance < radiusBall + radiusPlayer)
-      {
-        qreal vn1 = player->speedX * ax + player->speedY * ay;
-        qreal vn2 = speedX * ax + speedY * ay;
-        qreal dt = (radiusBall + radiusPlayer - distance) / (vn1 - vn2);
-        if (dt > 0.8) dt = 0.8; if (dt < -0.8) dt = -0.8;
-
-        setPos(x() - speedX * dt, y() - speedY * dt);
-
-        dx = x() - player->x();
-        dy = y() - player->y();
-        distance = sqrt(dx * dx + dy * dy);
-        if (distance == 0) {distance = 0.01;}
-
-        ax = dx/distance;
-        ay = dy/distance * -1;
-
-        vn1 = player->speedX * ax + player->speedY * ay;
-        vn2 = speedX * ax + speedY * ay;
-
-        qreal vt2 = -speedX * ay + speedY * ax;
-
-        vn2 = vn1 - vn2;
-
-        speedX = (vn2 * ax - vt2 * ay) * dt;
-        speedY = (vn2 * ay + vt2 * ax) * dt;
+        speedY -= (Config::BALL_BOOST_Y + player->getSpeedY());
       }*/
     }
   }
@@ -182,6 +175,10 @@ void Ball::colliding()
 
 void Ball::tick()
 {
+  emit startCalc();
+
   colliding();
   move();
+
+  emit stopCalc();
 }

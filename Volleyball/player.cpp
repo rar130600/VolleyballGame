@@ -16,22 +16,22 @@ Player::Player() :
 {
   setBrush(QBrush(Qt::darkGray));
   setRect(0, 0, width, height);
-  setPos(Config::SCREEN_WIDTH / 4 - width / 2, Config::SCREEN_HEIGHT - height - Config::BOTTOM_INDENT);
-
-  setFlag(QGraphicsItem::ItemIsFocusable);
 }
 
-void Player::keyPressEvent(QKeyEvent * event)
+void Player::keyPress(QKeyEvent * event)
 {
   switch(event->key())
   {
   case Qt::Key_Left:
+  case Qt::Key_A:
     isLeft = true;
     break;
   case Qt::Key_Right:
+  case Qt::Key_D:
     isRight = true;
     break;
   case Qt::Key_Up:
+  case Qt::Key_W:
     if (y() >= Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height)
     {
       isUp = true;
@@ -40,14 +40,16 @@ void Player::keyPressEvent(QKeyEvent * event)
   }
 }
 
-void Player::keyReleaseEvent(QKeyEvent * event)
+void Player::keyRelease(QKeyEvent * event)
 {
   switch (event->key())
   {
   case Qt::Key_Left:
+  case Qt::Key_A:
     isLeft = false;
     break;
   case Qt::Key_Right:
+  case Qt::Key_D:
     isRight = false;
     break;
   }
@@ -55,22 +57,19 @@ void Player::keyReleaseEvent(QKeyEvent * event)
 
 void Player::move()
 {
-  qreal oldY = y();
-  qreal oldX = x();
-
-  speedY -= Config::GRAVITY * 2;
+  speedY -= Config::PLAYER_Y_GRAVITY;
 
   if (isLeft)
   {
-    speedX = -Config::GRAVITY * 16;
+    speedX = -Config::PLAYER_X_BOOST;
   }
   if (isRight)
   {
-    speedX = Config::GRAVITY * 16;
+    speedX = Config::PLAYER_X_BOOST;
   }
   if (isUp)
   {
-    speedY = Config::GRAVITY * 56;
+    speedY = Config::PLAYER_Y_BOOST;
     isUp = false;
   }
 
@@ -78,25 +77,25 @@ void Player::move()
 
   if (speedX < 0)
   {
-    speedX += Config::GRAVITY;
+    speedX += Config::PLAYER_X_GRAVITY;
   }
   else if (speedX > 0)
   {
-    speedX -= Config::GRAVITY;
+    speedX -= Config::PLAYER_X_GRAVITY;
   }
 
   if (y() + height > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
   {
-    setPos(x(), oldY);
+    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height);
   }
 
   if (x() < 0)
   {
-    setPos(oldX, y());
+    setPos(0, y());
   }
   if (x() + width > Config::SCREEN_WIDTH)
   {
-    setPos(oldX, y());
+    setPos(Config::SCREEN_WIDTH - width, y());
   }
 }
 

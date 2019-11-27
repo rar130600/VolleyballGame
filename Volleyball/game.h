@@ -2,13 +2,12 @@
 #define GAME_H
 
 #include <QWidget>
-#include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QTimer>
 
 #include <ball.h>
 #include <player.h>
-
+#include <sceneForGame.h>
 
 class Game : public QWidget
 {
@@ -22,12 +21,13 @@ public slots:
   void tick();
 
 private:
-  QGraphicsScene * scene;
+  Ball * ball;
+  Player * player1;
+  Player * player2;
+
+  SceneForGame * scene;
   QGraphicsView * view;
   QTimer * timer;
-
-  Ball * ball;
-  Player  * player;
 };
 
 #endif // GAME_H

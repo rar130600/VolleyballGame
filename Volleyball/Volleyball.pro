@@ -19,13 +19,15 @@ SOURCES += \
   ball.cpp \
   game.cpp \
   main.cpp \
-  player.cpp
+  player.cpp \
+  sceneForGame.cpp
 
 HEADERS += \
   ball.h \
   config.h \
   game.h \
-  player.h
+  player.h \
+  sceneForGame.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
