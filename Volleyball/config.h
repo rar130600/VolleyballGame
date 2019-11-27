@@ -12,7 +12,7 @@ struct Config
   constexpr static qreal BALL_BOOST_X = 5.0;
   constexpr static qreal BALL_BOOST_Y = 5.0;
 
-  constexpr static int TIME = 24;
+  constexpr static int TIME = 17; // ~60 fps
   constexpr static int BOTTOM_INDENT = 5;
   constexpr static std::size_t SCREEN_WIDTH = 1200;
   constexpr static std::size_t SCREEN_HEIGHT = 900;

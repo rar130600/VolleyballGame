@@ -21,8 +21,7 @@ public slots:
 
 private:
   qreal speedX, speedY;
-  int diameter;
-  QTimer * timer;
+  std::size_t diameter;
 };
 
 #endif // BALL_H

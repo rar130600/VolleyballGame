@@ -19,10 +19,6 @@ Player::Player() :
   setPos(Config::SCREEN_WIDTH / 4 - width / 2, Config::SCREEN_HEIGHT - height - Config::BOTTOM_INDENT);
 
   setFlag(QGraphicsItem::ItemIsFocusable);
-
-  timer = new QTimer();
-  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
-  timer->start(Config::TIME);
 }
 
 void Player::keyPressEvent(QKeyEvent * event)
@@ -106,21 +102,7 @@ void Player::move()
 
 void Player::colliding()
 {
-  QList<QGraphicsItem *> colliding_items = collidingItems(Qt::IntersectsItemShape);
-  if (colliding_items.isEmpty())
-  {
-    return;
-  }
-  int n = colliding_items.size();
-  for (int i = 0; i < n; i++)
-  {
-    auto item = colliding_items[i];
-    if (typeid (* item) == typeid (Ball))
-    {
-      //qDebug() << "Colliding " << item->x() << " " << item->y();
 
-    }
-  }
 }
 
 qreal Player::getSpeedX() const

@@ -20,7 +20,6 @@ public:
 
   qreal getSpeedX() const;
   qreal getSpeedY() const;
-
 public slots:
   void tick();
 
@@ -28,7 +27,6 @@ private:
   std::size_t width, height;
   qreal speedX, speedY;
   bool isRight, isLeft, isUp;
-  QTimer * timer;
 };
 
 #endif // PLAYER_H

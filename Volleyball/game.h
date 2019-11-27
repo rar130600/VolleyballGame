@@ -6,6 +6,9 @@
 #include <QGraphicsView>
 #include <QTimer>
 
+#include <ball.h>
+#include <player.h>
+
 
 class Game : public QWidget
 {
@@ -13,8 +16,7 @@ class Game : public QWidget
 public:
   Game();
 
-  void addItem(QGraphicsItem * item);
-  void viewShow();
+  void start();
 
 public slots:
   void tick();
@@ -23,6 +25,9 @@ private:
   QGraphicsScene * scene;
   QGraphicsView * view;
   QTimer * timer;
+
+  Ball * ball;
+  Player  * player;
 };
 
 #endif // GAME_H

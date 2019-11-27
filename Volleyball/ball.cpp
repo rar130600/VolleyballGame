@@ -16,9 +16,6 @@ Ball::Ball() :
   setRect(0, 0, diameter, diameter);
   setPos(Config::SCREEN_WIDTH / 2 - diameter / 2, Config::SCREEN_HEIGHT / 4);
 
-  timer = new QTimer();
-  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
-  timer->start(Config::TIME);
 }
 
 void Ball::move()

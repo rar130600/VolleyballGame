@@ -14,15 +14,7 @@ int main(int argc, char * argv[])
 
   Game * game = new Game();
 
-  Player * player1 = new Player();
-  player1->setFocus();
-
-  Ball * ball = new Ball();
-
-  game->addItem(player1);
-  game->addItem(ball);
-
-  game->viewShow();
+  game->start();
 
   return volleyball.exec();
 }
