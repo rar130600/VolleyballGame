@@ -1,13 +1,13 @@
 #include <sceneForGame.h>
 
 SceneForGame::SceneForGame(Player * player1, Player * player2) :
-  player1(player1),
-  player2(player2)
+  player1_(player1),
+  player2_(player2)
 {
-  connect(this, SIGNAL(keyPressPlayer1(QKeyEvent *)), player1, SLOT(keyPress(QKeyEvent *)));
-  connect(this, SIGNAL(keyReleasePlayer1(QKeyEvent *)), player1, SLOT(keyRelease(QKeyEvent *)));
-  connect(this, SIGNAL(keyPressPlayer2(QKeyEvent *)), player2, SLOT(keyPress(QKeyEvent*)));
-  connect(this, SIGNAL(keyReleasePlayer2(QKeyEvent *)), player2, SLOT(keyRelease(QKeyEvent *)));
+  connect(this, SIGNAL(keyPressPlayer1(QKeyEvent *)), player1_, SLOT(keyPress(QKeyEvent *)));
+  connect(this, SIGNAL(keyReleasePlayer1(QKeyEvent *)), player1_, SLOT(keyRelease(QKeyEvent *)));
+  connect(this, SIGNAL(keyPressPlayer2(QKeyEvent *)), player2_, SLOT(keyPress(QKeyEvent*)));
+  connect(this, SIGNAL(keyReleasePlayer2(QKeyEvent *)), player2_, SLOT(keyRelease(QKeyEvent *)));
 }
 
 void SceneForGame::start()

@@ -26,9 +26,9 @@ public slots:
   void keyRelease(QKeyEvent * event);
 
 private:
-  std::size_t width, height;
-  qreal speedX, speedY;
-  bool isRight, isLeft, isUp;
+  std::size_t width_, height_;
+  qreal speedX_, speedY_;
+  bool isRight_, isLeft_, isUp_;
 };
 
 #endif // PLAYER_H

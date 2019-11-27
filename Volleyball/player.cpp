@@ -6,16 +6,16 @@
 #include <QBrush>
 
 Player::Player() :
-  width(Config::PLAYER_WIDTH),
-  height(Config::PLAYER_HEIGHT),
-  speedX(0.0),
-  speedY(0.0),
-  isRight(false),
-  isLeft(false),
-  isUp(false)
+  width_(Config::PLAYER_WIDTH),
+  height_(Config::PLAYER_HEIGHT),
+  speedX_(0.0),
+  speedY_(0.0),
+  isRight_(false),
+  isLeft_(false),
+  isUp_(false)
 {
   setBrush(QBrush(Qt::darkGray));
-  setRect(0, 0, width, height);
+  setRect(0, 0, width_, height_);
 }
 
 void Player::keyPress(QKeyEvent * event)
@@ -24,17 +24,17 @@ void Player::keyPress(QKeyEvent * event)
   {
   case Qt::Key_Left:
   case Qt::Key_A:
-    isLeft = true;
+    isLeft_ = true;
     break;
   case Qt::Key_Right:
   case Qt::Key_D:
-    isRight = true;
+    isRight_ = true;
     break;
   case Qt::Key_Up:
   case Qt::Key_W:
-    if (y() >= Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height)
+    if (y() >= Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height_)
     {
-      isUp = true;
+      isUp_ = true;
     }
     break;
   }
@@ -46,56 +46,56 @@ void Player::keyRelease(QKeyEvent * event)
   {
   case Qt::Key_Left:
   case Qt::Key_A:
-    isLeft = false;
+    isLeft_ = false;
     break;
   case Qt::Key_Right:
   case Qt::Key_D:
-    isRight = false;
+    isRight_ = false;
     break;
   }
 }
 
 void Player::move()
 {
-  speedY -= Config::PLAYER_Y_GRAVITY;
+  speedY_ -= Config::PLAYER_Y_GRAVITY;
 
-  if (isLeft)
+  if (isLeft_)
   {
-    speedX = -Config::PLAYER_X_BOOST;
+    speedX_ = -Config::PLAYER_X_BOOST;
   }
-  if (isRight)
+  if (isRight_)
   {
-    speedX = Config::PLAYER_X_BOOST;
+    speedX_ = Config::PLAYER_X_BOOST;
   }
-  if (isUp)
+  if (isUp_)
   {
-    speedY = Config::PLAYER_Y_BOOST;
-    isUp = false;
-  }
-
-  moveBy(speedX, -speedY);
-
-  if (speedX < 0)
-  {
-    speedX += Config::PLAYER_X_GRAVITY;
-  }
-  else if (speedX > 0)
-  {
-    speedX -= Config::PLAYER_X_GRAVITY;
+    speedY_ = Config::PLAYER_Y_BOOST;
+    isUp_ = false;
   }
 
-  if (y() + height > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
+  moveBy(speedX_, -speedY_);
+
+  if (speedX_ < 0)
   {
-    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height);
+    speedX_ += Config::PLAYER_X_GRAVITY;
+  }
+  else if (speedX_ > 0)
+  {
+    speedX_ -= Config::PLAYER_X_GRAVITY;
+  }
+
+  if (y() + height_ > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
+  {
+    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height_);
   }
 
   if (x() < 0)
   {
     setPos(0, y());
   }
-  if (x() + width > Config::SCREEN_WIDTH)
+  if (x() + width_ > Config::SCREEN_WIDTH)
   {
-    setPos(Config::SCREEN_WIDTH - width, y());
+    setPos(Config::SCREEN_WIDTH - width_, y());
   }
 }
 
@@ -106,12 +106,12 @@ void Player::colliding()
 
 qreal Player::getSpeedX() const
 {
-  return speedX;
+  return speedX_;
 }
 
 qreal Player::getSpeedY() const
 {
-  return speedY;
+  return speedY_;
 }
 
 void Player::tick()

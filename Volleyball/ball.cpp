@@ -8,64 +8,64 @@
 #include <QBrush>
 
 Ball::Ball() :
-  speedX(0.0),
-  speedY(0.0),
-  diameter(Config::PLAYER_WIDTH)
+  speedX_(0.0),
+  speedY_(0.0),
+  diameter_(Config::PLAYER_WIDTH)
 {
   setBrush(QBrush(Qt::yellow));
-  setRect(0, 0, diameter, diameter);
-  setPos(Config::SCREEN_WIDTH / 2 - diameter / 2, Config::SCREEN_HEIGHT / 4);
+  setRect(0, 0, diameter_, diameter_);
+  setPos(Config::SCREEN_WIDTH / 2 - diameter_ / 2, Config::SCREEN_HEIGHT / 4);
 
 }
 
 void Ball::move()
 {
-  speedY -= Config::GRAVITY / 4;
+  speedY_ -= Config::GRAVITY / 4;
 
-  if (speedX > Config::BALL_X_MAX_SPEED)
+  if (speedX_ > Config::BALL_X_MAX_SPEED)
   {
-    speedX = Config::BALL_X_MAX_SPEED;
+    speedX_ = Config::BALL_X_MAX_SPEED;
   }
-  else if (speedX < -Config::BALL_X_MAX_SPEED)
+  else if (speedX_ < -Config::BALL_X_MAX_SPEED)
   {
-    speedX = -Config::BALL_X_MAX_SPEED;
-  }
-
-  if (speedY > Config::BALL_Y_MAX_SPEED)
-  {
-    speedY = Config::BALL_Y_MAX_SPEED;
-  }
-  else if (speedY < -Config::BALL_Y_MAX_SPEED)
-  {
-    speedY = -Config::BALL_Y_MAX_SPEED;
+    speedX_ = -Config::BALL_X_MAX_SPEED;
   }
 
-  moveBy(speedX, -speedY);
-
-  if (y() + diameter > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
+  if (speedY_ > Config::BALL_Y_MAX_SPEED)
   {
-    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - diameter);
-    speedY = -speedY * Config::DRAG;
-    speedX = speedX * Config::DRAG;
+    speedY_ = Config::BALL_Y_MAX_SPEED;
+  }
+  else if (speedY_ < -Config::BALL_Y_MAX_SPEED)
+  {
+    speedY_ = -Config::BALL_Y_MAX_SPEED;
+  }
+
+  moveBy(speedX_, -speedY_);
+
+  if (y() + diameter_ > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
+  {
+    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - diameter_);
+    speedY_ = -speedY_ * Config::DRAG;
+    speedX_ = speedX_ * Config::DRAG;
   }
 
   if (y() < 0)
   {
     setPos(x(), 0);
-    speedY = - speedY * Config::DRAG;
-    speedX = speedX * Config::DRAG;
+    speedY_ = -speedY_ * Config::DRAG;
+    speedX_ = speedX_ * Config::DRAG;
   }
 
   if (x() < 0)
   {
     setPos(0, y());
-    speedX = - speedX * Config::DRAG;
+    speedX_ = -speedX_ * Config::DRAG;
   }
 
-  if (x() + diameter > Config::SCREEN_WIDTH)
+  if (x() + diameter_ > Config::SCREEN_WIDTH)
   {
-    setPos(Config::SCREEN_WIDTH - diameter, y());
-    speedX = - speedX * Config::DRAG;
+    setPos(Config::SCREEN_WIDTH - diameter_, y());
+    speedX_ = -speedX_ * Config::DRAG;
   }
 }
 
@@ -79,7 +79,7 @@ void Ball::colliding()
     if (typeid(* item) == typeid(Player))
     {
 
-      qDebug() << speedX << " " << speedY;
+      qDebug() << speedX_ << " " << speedY_;
       auto * player = static_cast<Player *>(item);
 
       qreal dx = x() - player->x();
@@ -90,34 +90,34 @@ void Ball::colliding()
       qreal sin = dy / d;
 
       qreal vn1 = player->getSpeedX() * cos + player->getSpeedY() * sin;
-      qreal vn2 = speedX * cos + speedY * sin;
-      qreal vt2 = speedX * sin + speedY * cos;
+      qreal vn2 = speedX_ * cos + speedY_ * sin;
+      qreal vt2 = speedX_ * sin + speedY_ * cos;
 
       qreal newVn2 = vn1 - vn2;
 
-      speedX = newVn2 * cos - vt2 * sin;
-      speedY = newVn2 * sin + vt2 * cos;
+      speedX_ = newVn2 * cos - vt2 * sin;
+      speedY_ = newVn2 * sin + vt2 * cos;
 
       if (player->getSpeedY() <= 0)
       {
-        speedY = - speedY;
+        speedY_ = -speedY_;
       }
 
       qreal radiusPlayer = Config::PLAYER_WIDTH / 2;
-      qreal radiusBall = diameter / 2;
+      qreal radiusBall = diameter_ / 2;
 
       if (radiusPlayer + radiusBall > d)
       {
         moveBy(dx / 3, dy / 3);
-        if (x() < 0 || x() + diameter > Config::SCREEN_WIDTH)
+        if (x() < 0 || x() + diameter_ > Config::SCREEN_WIDTH)
         {
           moveBy(-dx / 3, 0);
-          speedX += -dx / 3;
+          speedX_ += -dx / 3;
         }
-        if (y() + diameter > Config::SCREEN_HEIGHT + Config::BOTTOM_INDENT)
+        if (y() + diameter_ > Config::SCREEN_HEIGHT + Config::BOTTOM_INDENT)
         {
           moveBy(0, -dy / 3);
-          speedY += -dy / 3;
+          speedY_ += -dy / 3;
         }
       }
 

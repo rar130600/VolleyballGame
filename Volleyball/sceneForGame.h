@@ -21,8 +21,8 @@ signals:
   void keyReleasePlayer2(QKeyEvent * event);
 
 private:
-  Player * player1;
-  Player * player2;
+  Player * player1_;
+  Player * player2_;
 };
 
 #endif // SCENEFORGAME_H

@@ -23,8 +23,8 @@ public slots:
   void tick();
 
 private:
-  qreal speedX, speedY;
-  std::size_t diameter;
+  qreal speedX_, speedY_;
+  std::size_t diameter_;
 };
 
 #endif // BALL_H

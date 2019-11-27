@@ -4,41 +4,41 @@
 #include <QDebug>
 
 Game::Game() :
-  ball(new Ball()),
-  player1(new Player()),
-  player2(new Player()),
-  scene(new SceneForGame(player1, player2)),
-  view(new QGraphicsView(scene)),
-  timer(new QTimer())
+  ball_(new Ball()),
+  player1_(new Player()),
+  player2_(new Player()),
+  scene_(new SceneForGame(player1_, player2_)),
+  view_(new QGraphicsView(scene_)),
+  timer_(new QTimer())
 {
-  view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-  view->setFixedSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
-  scene->setSceneRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
+  view_->setFixedSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
+  scene_->setSceneRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
 
-  player1->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::BOTTOM_INDENT);
-  player2->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::BOTTOM_INDENT);
+  player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::BOTTOM_INDENT);
+  player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::BOTTOM_INDENT);
 
-  scene->addItem(ball);
-  scene->addItem(player1);
-  scene->addItem(player2);
+  scene_->addItem(ball_);
+  scene_->addItem(player1_);
+  scene_->addItem(player2_);
 
-  scene->start();
+  scene_->start();
 
-  connect(timer, SIGNAL(timeout()), ball, SLOT(tick()));
-  connect(timer, SIGNAL(timeout()), player1, SLOT(tick()));
-  connect(timer, SIGNAL(timeout()), player2, SLOT(tick()));
-  connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
+  connect(timer_, SIGNAL(timeout()), ball_, SLOT(tick()));
+  connect(timer_, SIGNAL(timeout()), player1_, SLOT(tick()));
+  connect(timer_, SIGNAL(timeout()), player2_, SLOT(tick()));
+  connect(timer_, SIGNAL(timeout()), this, SLOT(tick()));
 
-  connect(ball, SIGNAL(startCalc()), timer, SLOT(stop()));
-  connect(ball, SIGNAL(stopCalc()), timer, SLOT(start()));
+  connect(ball_, SIGNAL(startCalc()), timer_, SLOT(stop()));
+  connect(ball_, SIGNAL(stopCalc()), timer_, SLOT(start()));
 }
 
 void Game::start()
 {
-  timer->start(Config::TIME);
-  view->show();
+  timer_->start(Config::TIME);
+  view_->show();
 }
 
 void Game::tick()

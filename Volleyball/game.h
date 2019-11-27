@@ -21,13 +21,13 @@ public slots:
   void tick();
 
 private:
-  Ball * ball;
-  Player * player1;
-  Player * player2;
+  Ball * ball_;
+  Player * player1_;
+  Player * player2_;
 
-  SceneForGame * scene;
-  QGraphicsView * view;
-  QTimer * timer;
+  SceneForGame * scene_;
+  QGraphicsView * view_;
+  QTimer * timer_;
 };
 
 #endif // GAME_H
