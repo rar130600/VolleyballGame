@@ -1,16 +1,18 @@
 #include "ball.h"
 
-#include "config.h"
+#include <QBrush>
 #include <QList>
 #include <QDebug>
 #include <cmath>
-#include <math.h>
-#include <QBrush>
+
+#include "config.h"
+#include "player.h"
+#include "net.h"
 
 Ball::Ball() :
   speedX_(0.0),
   speedY_(0.0),
-  diameter_(Config::PLAYER_WIDTH)
+  diameter_(Config::BALL_DIAMETER)
 {
   setBrush(QBrush(Qt::yellow));
   setRect(0, 0, diameter_, diameter_);
@@ -20,7 +22,7 @@ Ball::Ball() :
 
 void Ball::move()
 {
-  speedY_ -= Config::GRAVITY / 4;
+  speedY_ -= Config::BALL_Y_GRAVITY;
 
   if (speedX_ > Config::BALL_X_MAX_SPEED)
   {
@@ -42,23 +44,23 @@ void Ball::move()
 
   moveBy(speedX_, -speedY_);
 
-  if (y() + diameter_ > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
+  if (y() + diameter_ > Config::SCREEN_HEIGHT - Config::INDENT)
   {
-    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - diameter_);
+    setPos(x(), Config::SCREEN_HEIGHT - Config::INDENT - diameter_);
     speedY_ = -speedY_ * Config::DRAG;
     speedX_ = speedX_ * Config::DRAG;
   }
 
   if (y() < 0)
   {
-    setPos(x(), 0);
+    setPos(x(), 0.0);
     speedY_ = -speedY_ * Config::DRAG;
     speedX_ = speedX_ * Config::DRAG;
   }
 
   if (x() < 0)
   {
-    setPos(0, y());
+    setPos(0.0, y());
     speedX_ = -speedX_ * Config::DRAG;
   }
 
@@ -76,10 +78,11 @@ void Ball::colliding()
   for (int i = 0; i < num; i++)
   {
     auto item = colliding_items[i];
+
     if (typeid(* item) == typeid(Player))
     {
 
-      qDebug() << speedX_ << " " << speedY_;
+      qDebug() << "Ball colliding with Player " << speedX_ << " " << speedY_;
       auto * player = static_cast<Player *>(item);
 
       qreal dx = x() - player->x();
@@ -91,7 +94,7 @@ void Ball::colliding()
 
       qreal vn1 = player->getSpeedX() * cos + player->getSpeedY() * sin;
       qreal vn2 = speedX_ * cos + speedY_ * sin;
-      qreal vt2 = speedX_ * sin + speedY_ * cos;
+      qreal vt2 = -speedX_ * sin + speedY_ * cos;
 
       qreal newVn2 = vn1 - vn2;
 
@@ -100,75 +103,58 @@ void Ball::colliding()
 
       if (player->getSpeedY() <= 0)
       {
-        speedY_ = -speedY_;
+        speedY_ = -speedY_ * Config::DRAG;
       }
+
+      player->setSpeedX(0.0);
+      player->setSpeedY(0.0);
 
       qreal radiusPlayer = Config::PLAYER_WIDTH / 2;
       qreal radiusBall = diameter_ / 2;
 
       if (radiusPlayer + radiusBall > d)
       {
-        moveBy(dx / 3, dy / 3);
-        if (x() < 0 || x() + diameter_ > Config::SCREEN_WIDTH)
+          if (y() > player->y())
+          {
+            dy = -dy;
+          }
+          moveBy(dx / 6 , dy / 6);
+          if (x() < 0 || x() + diameter_ > Config::SCREEN_WIDTH)
+          {
+            moveBy(-dx / 6, 0.0);
+            speedX_ += -dx / 6;
+          }
+          if (y() + diameter_ > Config::SCREEN_HEIGHT + Config::INDENT)
+          {
+            moveBy(0.0, -dy / 6);
+            speedY_ += -dy / 6;
+          }
+
+      }
+    }
+
+    if (typeid(* item) == typeid(Net))
+    {
+      qDebug() << "Ball colliding with Net " << speedX_ << " " << speedY_;
+      auto * net = static_cast<Net *>(item);
+
+      if (y() + diameter_ - 5 > net->y())
+      {
+        if (speedX_ < 0)
         {
-          moveBy(-dx / 3, 0);
-          speedX_ += -dx / 3;
+          setPos(net->x() + Config::NET_WIDTH + 10, y());
         }
-        if (y() + diameter_ > Config::SCREEN_HEIGHT + Config::BOTTOM_INDENT)
+        if (speedX_ > 0)
         {
-          moveBy(0, -dy / 3);
-          speedY_ += -dy / 3;
+          setPos(net->x() - diameter_ - 10, y());
         }
+      }
+      else
+      {
+        speedY_ = -speedY_ * Config::DRAG * 2;
       }
 
-      // does not work well
-      /*if (player->getSpeedX() >= 0 && speedX <= 0.0)
-      {
-        speedX = -(speedX - Config::BALL_BOOST_X - player->getSpeedX());
-      }
-      if (player->getSpeedX() <= 0 && speedX >= 0)
-      {
-        speedX = -(speedX + Config::BALL_BOOST_X + player->getSpeedX());
-      }
-      if (player->getSpeedX() >= 0 && speedX >= 0)
-      {
-        if (player->x() < x())
-        {
-          speedX += (Config::BALL_BOOST_X + player->getSpeedX());
-        }
-        else if (player->x() >= x() + diameter)
-        {
-          speedX = -(speedX + Config::BALL_BOOST_X + player->getSpeedX());
-        }
-      }
-      if (player->getSpeedX() <= 0 && speedX <= 0)
-      {
-        if (player->x() >= x() + diameter)
-        {
-          speedX -= (Config::BALL_BOOST_X + player->getSpeedX());
-        }
-        else if (player->x() <= x())
-        {
-          speedX = -(speedX - Config::BALL_BOOST_X - player->getSpeedX());
-        }
-      }
-
-      if (player->getSpeedY() >= 0 && speedY <= 0)
-      {
-        speedY = -(speedY - Config::BALL_BOOST_Y - player->getSpeedY());
-      }
-      if (player->getSpeedY() <= 0 && speedY >= 0)
-      {
-        speedY = -(speedY + Config::BALL_BOOST_Y + player->getSpeedY());
-      }
-      if (player->getSpeedY() > 0 && speedY >= 0)
-      {
-        speedY += (Config::BALL_BOOST_Y + player->getSpeedY());
-      }
-      if (player->getSpeedY() < 0 && speedY <= 0)
-      {
-        speedY -= (Config::BALL_BOOST_Y + player->getSpeedY());
-      }*/
+      speedX_ = -speedX_ * Config::DRAG * 2;
     }
   }
 }

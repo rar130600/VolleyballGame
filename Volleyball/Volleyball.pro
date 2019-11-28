@@ -19,6 +19,7 @@ SOURCES += \
   ball.cpp \
   game.cpp \
   main.cpp \
+  net.cpp \
   player.cpp \
   sceneForGame.cpp
 
@@ -26,6 +27,7 @@ HEADERS += \
   ball.h \
   config.h \
   game.h \
+  net.h \
   player.h \
   sceneForGame.h
 

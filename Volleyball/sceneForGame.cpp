@@ -10,11 +10,6 @@ SceneForGame::SceneForGame(Player * player1, Player * player2) :
   connect(this, SIGNAL(keyReleasePlayer2(QKeyEvent *)), player2_, SLOT(keyRelease(QKeyEvent *)));
 }
 
-void SceneForGame::start()
-{
-
-}
-
 void SceneForGame::keyPressEvent(QKeyEvent * event)
 {
   switch (event->key())

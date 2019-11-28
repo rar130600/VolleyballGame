@@ -1,9 +1,12 @@
 #include <player.h>
 
-#include <config.h>
-#include "ball.h"
 #include <QDebug>
 #include <QBrush>
+#include <cmath>
+
+#include "config.h"
+#include "ball.h"
+#include "net.h"
 
 Player::Player() :
   width_(Config::PLAYER_WIDTH),
@@ -32,7 +35,7 @@ void Player::keyPress(QKeyEvent * event)
     break;
   case Qt::Key_Up:
   case Qt::Key_W:
-    if (y() >= Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height_)
+    if (y() >= Config::SCREEN_HEIGHT - Config::INDENT - height_)
     {
       isUp_ = true;
     }
@@ -57,8 +60,6 @@ void Player::keyRelease(QKeyEvent * event)
 
 void Player::move()
 {
-  speedY_ -= Config::PLAYER_Y_GRAVITY;
-
   if (isLeft_)
   {
     speedX_ = -Config::PLAYER_X_BOOST;
@@ -73,20 +74,37 @@ void Player::move()
     isUp_ = false;
   }
 
-  moveBy(speedX_, -speedY_);
+  speedY_ -= Config::PLAYER_Y_GRAVITY;
 
-  if (speedX_ < 0)
+  if (speedX_ < 0.0)
   {
     speedX_ += Config::PLAYER_X_GRAVITY;
   }
-  else if (speedX_ > 0)
+  else if (speedX_ > 0.0)
   {
     speedX_ -= Config::PLAYER_X_GRAVITY;
   }
-
-  if (y() + height_ > Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT)
+  if (std::abs(speedX_) < 0.01)
   {
-    setPos(x(), Config::SCREEN_HEIGHT - Config::BOTTOM_INDENT - height_);
+    speedX_ = 0.0;
+  }
+
+  if (speedY_ < -Config::PLAYER_Y_BOOST)
+  {
+    speedY_ = -Config::PLAYER_Y_BOOST;
+  }
+  if (speedY_ > Config::PLAYER_Y_BOOST)
+  {
+    speedY_ = Config::PLAYER_Y_BOOST;
+  }
+
+  moveBy(speedX_, -speedY_);
+
+
+  //collision with Scene
+  if (y() + height_ > Config::SCREEN_HEIGHT - Config::INDENT)
+  {
+    setPos(x(), Config::SCREEN_HEIGHT - Config::INDENT - height_);
   }
 
   if (x() < 0)
@@ -101,7 +119,28 @@ void Player::move()
 
 void Player::colliding()
 {
+  QList<QGraphicsItem *> colliding_items = collidingItems(Qt::IntersectsItemBoundingRect);
+  int num = colliding_items.size();
+  for (int i = 0; i < num; i++)
+  {
+    auto item = colliding_items[i];
 
+    if (typeid(* item) == typeid (Net))
+    {
+      qDebug() << "Player colliding with Net " << speedX_ << " " << speedY_;
+
+      if (speedX_ > 0.0)
+      {
+        setPos(((Config::SCREEN_WIDTH - Config::NET_WIDTH) / 2) - width_ - 1, y());
+      }
+      else if (speedX_ < 0.0)
+      {
+        setPos((Config::SCREEN_WIDTH + Config::NET_WIDTH) / 2 + 1, y());
+      }
+
+      speedX_ = 0.0;
+    }
+  }
 }
 
 qreal Player::getSpeedX() const
@@ -112,6 +151,16 @@ qreal Player::getSpeedX() const
 qreal Player::getSpeedY() const
 {
   return speedY_;
+}
+
+void Player::setSpeedX(qreal speedX)
+{
+  speedX_ = speedX;
+}
+
+void Player::setSpeedY(qreal speedY)
+{
+  speedY_ = speedY;
 }
 
 void Player::tick()

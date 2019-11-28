@@ -19,6 +19,8 @@ public:
 
   qreal getSpeedX() const;
   qreal getSpeedY() const;
+  void setSpeedX(qreal speedX);
+  void setSpeedY(qreal speedY);
 
 public slots:
   void tick();

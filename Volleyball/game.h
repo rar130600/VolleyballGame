@@ -8,6 +8,7 @@
 #include <ball.h>
 #include <player.h>
 #include <sceneForGame.h>
+#include <net.h>
 
 class Game : public QWidget
 {
@@ -24,6 +25,7 @@ private:
   Ball * ball_;
   Player * player1_;
   Player * player2_;
+  Net * net_;
 
   SceneForGame * scene_;
   QGraphicsView * view_;
