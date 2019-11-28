@@ -1,7 +1,6 @@
 #include <player.h>
 
 #include <QDebug>
-#include <QBrush>
 #include <cmath>
 
 #include "config.h"
@@ -17,7 +16,6 @@ Player::Player() :
   isLeft_(false),
   isUp_(false)
 {
-  setBrush(QBrush(Qt::darkGray));
   setRect(0, 0, width_, height_);
 }
 

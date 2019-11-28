@@ -4,6 +4,10 @@ SceneForGame::SceneForGame(Player * player1, Player * player2) :
   player1_(player1),
   player2_(player2)
 {
+  //устанавливаем фокус на сцену(+ фокус ставится на сцену по умолчанию)
+  setFocus();
+
+  //соединяем сигналы и слоты по нажатию клавиши
   connect(this, SIGNAL(keyPressPlayer1(QKeyEvent *)), player1_, SLOT(keyPress(QKeyEvent *)));
   connect(this, SIGNAL(keyReleasePlayer1(QKeyEvent *)), player1_, SLOT(keyRelease(QKeyEvent *)));
   connect(this, SIGNAL(keyPressPlayer2(QKeyEvent *)), player2_, SLOT(keyPress(QKeyEvent*)));

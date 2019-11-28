@@ -1,6 +1,5 @@
 #include "ball.h"
 
-#include <QBrush>
 #include <QList>
 #include <QDebug>
 #include <cmath>
@@ -14,10 +13,7 @@ Ball::Ball() :
   speedY_(0.0),
   diameter_(Config::BALL_DIAMETER)
 {
-  setBrush(QBrush(Qt::yellow));
   setRect(0, 0, diameter_, diameter_);
-  setPos(Config::SCREEN_WIDTH / 2 - diameter_ / 2, Config::SCREEN_HEIGHT / 4);
-
 }
 
 void Ball::move()
@@ -47,8 +43,11 @@ void Ball::move()
   if (y() + diameter_ > Config::SCREEN_HEIGHT - Config::INDENT)
   {
     setPos(x(), Config::SCREEN_HEIGHT - Config::INDENT - diameter_);
-    speedY_ = -speedY_ * Config::DRAG;
-    speedX_ = speedX_ * Config::DRAG;
+    /*speedY_ = -speedY_ * Config::DRAG;
+    speedX_ = speedX_ * Config::DRAG;*/
+    speedY_ = 0.0;
+    speedX_ = 0.0;
+    emit ballOnBottom(x());
   }
 
   if (y() < 0)

@@ -5,10 +5,11 @@
 #include <QGraphicsView>
 #include <QTimer>
 
-#include <ball.h>
-#include <player.h>
-#include <sceneForGame.h>
-#include <net.h>
+#include "ball.h"
+#include "player.h"
+#include "sceneForGame.h"
+#include "net.h"
+#include "rules.h"
 
 class Game : public QWidget
 {
@@ -20,6 +21,7 @@ public:
 
 public slots:
   void tick();
+  void ballOnBottom(qreal x);
 
 private:
   Ball * ball_;
@@ -30,6 +32,7 @@ private:
   SceneForGame * scene_;
   QGraphicsView * view_;
   QTimer * timer_;
+  Rules * rules_;
 };
 
 #endif // GAME_H

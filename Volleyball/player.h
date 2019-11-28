@@ -13,10 +13,8 @@ class Player : public QObject, public QGraphicsEllipseItem
 public:
   Player();
 
-
   void move();
   void colliding();
-
   qreal getSpeedX() const;
   qreal getSpeedY() const;
   void setSpeedX(qreal speedX);

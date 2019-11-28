@@ -12,9 +12,11 @@ public:
 
   void move();
   void colliding();
+
 signals:
   void startCalc();
   void stopCalc();
+  void ballOnBottom(qreal x);
 
 public slots:
   void tick();

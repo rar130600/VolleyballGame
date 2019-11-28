@@ -10,6 +10,7 @@ class SceneForGame : public QGraphicsScene
   Q_OBJECT
 public:
   SceneForGame(Player * player1, Player * player2);
+
   void keyPressEvent(QKeyEvent *event) override;
   void keyReleaseEvent(QKeyEvent *event) override;
 

@@ -21,6 +21,7 @@ SOURCES += \
   main.cpp \
   net.cpp \
   player.cpp \
+  rules.cpp \
   sceneForGame.cpp
 
 HEADERS += \
@@ -29,6 +30,7 @@ HEADERS += \
   game.h \
   net.h \
   player.h \
+  rules.h \
   sceneForGame.h
 
 # Default rules for deployment.
