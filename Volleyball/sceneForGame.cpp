@@ -2,7 +2,8 @@
 
 SceneForGame::SceneForGame(Player * player1, Player * player2) :
   player1_(player1),
-  player2_(player2)
+  player2_(player2),
+  isPauseGame_(false)
 {
   //устанавливаем фокус на сцену(+ фокус ставится на сцену по умолчанию)
   setFocus();
@@ -30,8 +31,12 @@ void SceneForGame::keyPressEvent(QKeyEvent * event)
   case Qt::Key_S:
     emit keyPressPlayer1(event);
     break;
+  case Qt::Key_Escape:
+  case Qt::Key_Space:
+    isPauseGame_ = !isPauseGame_;
+    emit gameEvent(event, isPauseGame_);
+    break;
   }
-
 }
 
 void SceneForGame::keyReleaseEvent(QKeyEvent * event)
@@ -49,4 +54,9 @@ void SceneForGame::keyReleaseEvent(QKeyEvent * event)
     emit keyReleasePlayer1(event);
     break;
   }
+}
+
+void SceneForGame::resetIsPauseGame()
+{
+  isPauseGame_ = false;
 }

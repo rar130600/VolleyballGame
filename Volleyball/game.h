@@ -22,12 +22,14 @@ public:
 public slots:
   void tick();
   void ballOnBottom(qreal x);
+  void gameEvent(QKeyEvent * event, bool isPause);
 
 private:
   Ball * ball_;
   Player * player1_;
   Player * player2_;
   Net * net_;
+  QGraphicsRectItem * backgroundPause_;
 
   SceneForGame * scene_;
   QGraphicsView * view_;

@@ -11,6 +11,7 @@ Game::Game() :
   player1_(new Player()),
   player2_(new Player()),
   net_(new Net()),
+  backgroundPause_(new QGraphicsRectItem ()),
   scene_(new SceneForGame(player1_, player2_)),
   view_(new QGraphicsView(scene_)),
   timer_(new QTimer()),
@@ -24,29 +25,37 @@ Game::Game() :
   view_->setFixedSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
   scene_->setSceneRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
 
-  QGraphicsTextItem * tmpScoreText;
+  QGraphicsTextItem * tmpRulesText;
 
   //красим объекты
   player1_->setBrush(QBrush(Qt::darkRed));
   player2_->setBrush(QBrush(Qt::darkBlue));
   ball_->setBrush(QBrush(Qt::yellow));
   net_->setBrush(QBrush(Qt::black));
+  backgroundPause_->setBrush(QBrush(Qt::black));
+  backgroundPause_->setOpacity(0.5);
 
-  tmpScoreText = rules_->getTextItemScorePlayer1();
-  tmpScoreText->setDefaultTextColor(Qt::red);
-  tmpScoreText = rules_->getTextItemScorePlayer2();
-  tmpScoreText->setDefaultTextColor(Qt::blue);
+  tmpRulesText = rules_->getTextItemScorePlayer1();
+  tmpRulesText->setDefaultTextColor(Qt::red);
+  tmpRulesText = rules_->getTextItemScorePlayer2();
+  tmpRulesText->setDefaultTextColor(Qt::blue);
+  tmpRulesText = rules_->getTextItemInfo();
+  tmpRulesText->setDefaultTextColor(Qt::red);
 
   //расставляем объекты
   player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
   player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
   ball_->setPos(Config::SCREEN_WIDTH / 2 - Config::BALL_DIAMETER / 2, Config::SCREEN_HEIGHT / 4);
   net_->setPos((Config::SCREEN_WIDTH - Config::NET_WIDTH) / 2, Config::SCREEN_HEIGHT - Config::NET_HEIGHT);
+  backgroundPause_->setRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
 
-  tmpScoreText = rules_->getTextItemScorePlayer1();
-  tmpScoreText->setPos(20.0, 0.0);
-  tmpScoreText = rules_->getTextItemScorePlayer2();
-  tmpScoreText->setPos(Config::SCREEN_WIDTH - 165, 0);
+  tmpRulesText = rules_->getTextItemScorePlayer1();
+  tmpRulesText->setPos(Config::INDENT, 0.0);
+  tmpRulesText = rules_->getTextItemScorePlayer2();
+  tmpRulesText->setPos(Config::SCREEN_WIDTH + (tmpRulesText->textWidth() * Config::TEXT_SIZE_SCORE * 6), 0);
+  tmpRulesText = rules_->getTextItemInfo();
+  tmpRulesText->setPos(Config::SCREEN_WIDTH / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 5),
+                       Config::SCREEN_HEIGHT / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 3));
 
   //добавляем объекты на сцену
   scene_->addItem(ball_);
@@ -55,6 +64,7 @@ Game::Game() :
   scene_->addItem(net_);
   scene_->addItem(rules_->getTextItemScorePlayer1());
   scene_->addItem(rules_->getTextItemScorePlayer2());
+  scene_->addItem(rules_->getTextItemInfo());
 
   //соединяем сигналы и слоты
   connect(timer_, SIGNAL(timeout()), this, SLOT(tick()));
@@ -66,6 +76,8 @@ Game::Game() :
   connect(ball_, SIGNAL(startCalc()), timer_, SLOT(stop()));
   connect(ball_, SIGNAL(stopCalc()), timer_, SLOT(start()));
   connect(ball_, SIGNAL(ballOnBottom(qreal)), this, SLOT(ballOnBottom(qreal)));
+
+  connect(scene_, SIGNAL(gameEvent(QKeyEvent *, bool)), this, SLOT(gameEvent(QKeyEvent *, bool)));
 }
 
 void Game::start()
@@ -77,24 +89,90 @@ void Game::start()
 void Game::tick()
 {
   timer_->setInterval(Config::TIME);
+  rules_->resetInfoText();
 }
 
 void Game::ballOnBottom(qreal x)
 {
-  timer_->stop();
   player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
   player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
 
   if (x > Config::SCREEN_WIDTH / 2)
   {
+    ball_->resetSpeeds();
     ball_->setPos(Config::SCREEN_WIDTH / 4 - Config::BALL_DIAMETER / 2, (Config::SCREEN_HEIGHT - Config::BALL_DIAMETER) / 2);
     rules_->increaseScorePlayer1();
   }
   else
   {
+    ball_->resetSpeeds();
     ball_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, (Config::SCREEN_HEIGHT - Config::BALL_DIAMETER) / 2);
     rules_->increaseScorePlayer2();
   }
-  timer_->setInterval(2000);
-  timer_->start();
+
+  if (rules_->getScorePlayer1() >= Config::SCORE_FOR_WINNING || rules_->getScorePlayer2() >= Config::SCORE_FOR_WINNING)
+  {
+    if (rules_->getScorePlayer1() >= Config::SCORE_FOR_WINNING)
+    {
+      rules_->setWhoWin(true);
+    }
+    else
+    {
+      rules_->setWhoWin(false);
+    }
+
+    QGraphicsTextItem * tmpRulesText = rules_->getTextItemInfo();
+    tmpRulesText->setPos(Config::SCREEN_WIDTH / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 5),
+                         Config::SCREEN_HEIGHT / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 3));
+
+    rules_->resetScore();
+    ball_->resetSpeeds();
+    ball_->setPos(Config::SCREEN_WIDTH / 2 - Config::BALL_DIAMETER / 2, Config::SCREEN_HEIGHT / 4);
+    timer_->setInterval(INT_MAX); //delay ~25 days
+  }
+  else
+  {
+    timer_->setInterval(1000);
+  }
+}
+
+void Game::gameEvent(QKeyEvent * event, bool isPause)
+{
+  switch (event->key())
+  {
+  case Qt::Key_Escape:
+    if (isPause)
+    {
+      scene_->addItem(backgroundPause_);
+      rules_->setInfoText(QString("PAUSE"));
+      QGraphicsTextItem * tmpRulesText = rules_->getTextItemInfo();
+      tmpRulesText->setPos(Config::SCREEN_WIDTH / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 2.5),
+                           Config::SCREEN_HEIGHT / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 3));
+
+      timer_->setInterval(INT_MAX); //delay ~25 days
+    }
+    else
+    {
+      scene_->removeItem(backgroundPause_);
+      rules_->resetInfoText();
+      timer_->setInterval(Config::TIME);
+    }
+    break;
+  case Qt::Key_Space:
+    rules_->resetScore();
+    rules_->resetInfoText();
+    timer_->setInterval(Config::TIME);
+    if (isPause)
+    {
+      scene_->resetIsPauseGame();
+    }
+
+    player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
+    player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
+
+    ball_->resetSpeeds();
+    ball_->setPos(Config::SCREEN_WIDTH / 2 - Config::BALL_DIAMETER / 2, Config::SCREEN_HEIGHT / 4);
+
+    break;
+  }
 }

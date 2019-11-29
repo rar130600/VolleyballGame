@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-struct Config
+namespace Config
 {
   constexpr static qreal GRAVITY = 0.3;
   constexpr static qreal DRAG = 0.8;
@@ -12,6 +12,11 @@ struct Config
   constexpr static int INDENT = 5;
   constexpr static std::size_t SCREEN_WIDTH = 1200;
   constexpr static std::size_t SCREEN_HEIGHT = 900;
+
+  constexpr static std::size_t SCORE_FOR_WINNING = 1;
+
+  constexpr static std::size_t TEXT_SIZE_SCORE = 24;
+  constexpr static std::size_t TEXT_SIZE_INFO = 36;
 
   constexpr static qreal BALL_Y_GRAVITY = GRAVITY / 4;
   constexpr static qreal BALL_X_BOOST = 1.0;

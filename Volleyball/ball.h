@@ -12,6 +12,7 @@ public:
 
   void move();
   void colliding();
+  void resetSpeeds();
 
 signals:
   void startCalc();

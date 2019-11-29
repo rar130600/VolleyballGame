@@ -38,6 +38,16 @@ void Ball::move()
     speedY_ = -Config::BALL_Y_MAX_SPEED;
   }
 
+  if (std::abs(speedX_) < 0.01)
+  {
+    speedX_ = 0.0;
+  }
+  if (std::abs(speedY_) < 0.01)
+  {
+    speedY_ = 0.0;
+  }
+
+
   moveBy(speedX_, -speedY_);
 
   if (y() + diameter_ > Config::SCREEN_HEIGHT - Config::INDENT)
@@ -45,8 +55,6 @@ void Ball::move()
     setPos(x(), Config::SCREEN_HEIGHT - Config::INDENT - diameter_);
     /*speedY_ = -speedY_ * Config::DRAG;
     speedX_ = speedX_ * Config::DRAG;*/
-    speedY_ = 0.0;
-    speedX_ = 0.0;
     emit ballOnBottom(x());
   }
 
@@ -137,7 +145,7 @@ void Ball::colliding()
       qDebug() << "Ball colliding with Net " << speedX_ << " " << speedY_;
       auto * net = static_cast<Net *>(item);
 
-      if (y() + diameter_ - 5 > net->y())
+      if (y() + diameter_- 5 > net->y())
       {
         if (speedX_ < 0)
         {
@@ -150,12 +158,19 @@ void Ball::colliding()
       }
       else
       {
-        speedY_ = -speedY_ * Config::DRAG * 2;
+        setPos(x(), y() + speedY_);
+        speedY_ = -speedY_ * Config::DRAG;
       }
 
-      speedX_ = -speedX_ * Config::DRAG * 2;
+      speedX_ = -speedX_ * Config::DRAG;
     }
   }
+}
+
+void Ball::resetSpeeds()
+{
+  speedY_ = 0.0;
+  speedX_ = 0.0;
 }
 
 void Ball::tick()
