@@ -12,7 +12,9 @@ Ball::Ball() :
   speedY_(0.0),
   diameter_(Config::BALL_DIAMETER)
 {
-  setRect(0, 0, diameter_, diameter_);
+  QPixmap image;
+  image.load(":/images/resource/ball.png");
+  setPixmap(image.scaled(static_cast<int>(diameter_), static_cast<int>(diameter_), Qt::KeepAspectRatio));
 }
 
 void Ball::move()
@@ -33,6 +35,7 @@ void Ball::move()
 
   //двигаем мяч
   moveBy(speedX_, -speedY_);
+
 
   checkCollisionWithScene();
 }
@@ -76,7 +79,7 @@ void Ball::colliding()
       player->setSpeedX(0.0);
       player->setSpeedY(0.0);
 
-      qreal radiusPlayer = Config::PLAYER_WIDTH / 2;
+      qreal radiusPlayer = Config::PLAYER_HEIGHT / 2;
       qreal radiusBall = diameter_ / 2;
 
       //если мяч внутри игрока (возникает из-за большой скорости мяча)

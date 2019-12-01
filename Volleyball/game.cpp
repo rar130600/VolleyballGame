@@ -2,6 +2,8 @@
 
 #include <QBrush>
 #include <QGraphicsTextItem>
+#include <QPixmap>
+#include <QImage>
 
 #include "config.h"
 
@@ -16,24 +18,30 @@ Game::Game() :
   timer_(new QTimer()),
   rules_(new Rules())
 {
-  //убираем скролл бары у окна
-  view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
   //устанавливаем размеры окна
   view_->setFixedSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
   scene_->setSceneRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
 
-  QGraphicsTextItem * tmpRulesText;
+  //убираем скролл бары у окна и устанавливаем фон
+  view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view_->setBackgroundBrush(QBrush(QImage(":/images/resource/background2.png")));
 
-  //красим объекты
-  player1_->setBrush(QBrush(Qt::darkRed));
-  player2_->setBrush(QBrush(Qt::darkBlue));
-  ball_->setBrush(QBrush(Qt::yellow));
-  net_->setBrush(QBrush(Qt::black));
+  //раскрашиваем и устанавливаем текстуры предметов
+  QPixmap imagePlayer1;
+  QPixmap imagePlayer2;
+
+  imagePlayer1.load(":/images/resource/newPlayer1.png");
+  imagePlayer2.load(":/images/resource/newPlayer2.png");
+
+  player1_->setPixmap(imagePlayer1.scaled(Config::PLAYER_WIDTH, Config::PLAYER_HEIGHT, Qt::KeepAspectRatio));
+  player2_->setPixmap(imagePlayer2.scaled(Config::PLAYER_WIDTH, Config::PLAYER_HEIGHT, Qt::KeepAspectRatio));
+
+  net_->setBrush(QBrush(Qt::gray));
   backgroundPause_->setBrush(QBrush(Qt::black));
   backgroundPause_->setOpacity(0.5);
 
+  QGraphicsTextItem * tmpRulesText;
   tmpRulesText = rules_->getTextItemScorePlayer1();
   tmpRulesText->setDefaultTextColor(Qt::red);
   tmpRulesText = rules_->getTextItemScorePlayer2();

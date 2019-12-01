@@ -14,9 +14,7 @@ Player::Player() :
   isRight_(false),
   isLeft_(false),
   isUp_(false)
-{
-  setRect(0, 0, width_, height_);
-}
+{ }
 
 void Player::keyPress(QKeyEvent * event)
 {

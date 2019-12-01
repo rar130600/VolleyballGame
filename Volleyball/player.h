@@ -2,12 +2,10 @@
 #define PLAYER_H
 
 #include <QObject>
-#include <QTimer>
-#include <QGraphicsItem>
-#include <QGraphicsRectItem>
+#include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 
-class Player : public QObject, public QGraphicsEllipseItem
+class Player : public QObject, public QGraphicsPixmapItem
 {
   Q_OBJECT
 public:

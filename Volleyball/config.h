@@ -29,8 +29,8 @@ namespace Config
   constexpr static qreal PLAYER_Y_GRAVITY = GRAVITY * 4;
   constexpr static qreal PLAYER_X_BOOST = GRAVITY * 32;
   constexpr static qreal PLAYER_Y_BOOST = GRAVITY * 110;
-  constexpr static std::size_t PLAYER_WIDTH = SCREEN_WIDTH / 12;
-  constexpr static std::size_t PLAYER_HEIGHT = SCREEN_HEIGHT / 9;
+  constexpr static std::size_t PLAYER_WIDTH = 120;
+  constexpr static std::size_t PLAYER_HEIGHT = 200;
 
   constexpr static std::size_t NET_WIDTH = 10;
   constexpr static std::size_t NET_HEIGHT = SCREEN_HEIGHT / 2;
