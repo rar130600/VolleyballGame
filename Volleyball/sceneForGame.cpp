@@ -32,8 +32,10 @@ void SceneForGame::keyPressEvent(QKeyEvent * event)
     emit keyPressPlayer1(event);
     break;
   case Qt::Key_Escape:
-  case Qt::Key_Space:
     isPauseGame_ = !isPauseGame_;
+    emit gameEvent(event, isPauseGame_);
+    break;
+  case Qt::Key_Space:
     emit gameEvent(event, isPauseGame_);
     break;
   }

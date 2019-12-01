@@ -164,6 +164,7 @@ void Game::gameEvent(QKeyEvent * event, bool isPause)
     timer_->setInterval(Config::TIME);
     if (isPause)
     {
+      scene_->removeItem(backgroundPause_);
       scene_->resetIsPauseGame();
     }
 
