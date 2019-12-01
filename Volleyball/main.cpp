@@ -1,7 +1,4 @@
 #include <QApplication>
-#include <QGraphicsScene>
-#include <QGraphicsRectItem>
-#include <QGraphicsView>
 
 #include <game.h>
 #include <player.h>

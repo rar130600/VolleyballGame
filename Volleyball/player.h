@@ -13,8 +13,6 @@ class Player : public QObject, public QGraphicsEllipseItem
 public:
   Player();
 
-  void move();
-  void colliding();
   qreal getSpeedX() const;
   qreal getSpeedY() const;
   void setSpeedX(qreal speedX);
@@ -29,6 +27,11 @@ private:
   std::size_t width_, height_;
   qreal speedX_, speedY_;
   bool isRight_, isLeft_, isUp_;
+
+  void move();
+  void colliding();
+  void checkMaxSpeed();
+  void checkCollisionWithScene();
 };
 
 #endif // PLAYER_H

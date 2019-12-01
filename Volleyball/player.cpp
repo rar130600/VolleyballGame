@@ -1,6 +1,5 @@
 #include <player.h>
 
-#include <QDebug>
 #include <cmath>
 
 #include "config.h"
@@ -56,50 +55,30 @@ void Player::keyRelease(QKeyEvent * event)
   }
 }
 
-void Player::move()
+void Player::checkMaxSpeed()
 {
-  if (isLeft_)
-  {
-    speedX_ = -Config::PLAYER_X_BOOST;
-  }
-  if (isRight_)
+  if (speedX_ > Config::PLAYER_X_BOOST)
   {
     speedX_ = Config::PLAYER_X_BOOST;
   }
-  if (isUp_)
+  if (speedX_ < -Config::PLAYER_X_BOOST)
   {
-    speedY_ = Config::PLAYER_Y_BOOST;
-    isUp_ = false;
+    speedX_ = -Config::PLAYER_X_BOOST;
   }
 
-  speedY_ -= Config::PLAYER_Y_GRAVITY;
-
-  if (speedX_ < 0.0)
-  {
-    speedX_ += Config::PLAYER_X_GRAVITY;
-  }
-  else if (speedX_ > 0.0)
-  {
-    speedX_ -= Config::PLAYER_X_GRAVITY;
-  }
-  if (std::abs(speedX_) < 0.01)
-  {
-    speedX_ = 0.0;
-  }
-
-  if (speedY_ < -Config::PLAYER_Y_BOOST)
-  {
-    speedY_ = -Config::PLAYER_Y_BOOST;
-  }
   if (speedY_ > Config::PLAYER_Y_BOOST)
   {
     speedY_ = Config::PLAYER_Y_BOOST;
   }
+  if (speedY_ < -Config::PLAYER_Y_BOOST)
+  {
+    speedY_ = -Config::PLAYER_Y_BOOST;
+  }
 
-  moveBy(speedX_, -speedY_);
+}
 
-
-  //collision with Scene
+void Player::checkCollisionWithScene()
+{
   if (y() + height_ > Config::SCREEN_HEIGHT - Config::INDENT)
   {
     setPos(x(), Config::SCREEN_HEIGHT - Config::INDENT - height_);
@@ -115,6 +94,50 @@ void Player::move()
   }
 }
 
+void Player::move()
+{
+  //задаем ускорение в нужном направлении
+  if (isLeft_)
+  {
+    speedX_ = -Config::PLAYER_X_BOOST;
+  }
+  if (isRight_)
+  {
+    speedX_ = Config::PLAYER_X_BOOST;
+  }
+  if (isUp_)
+  {
+    speedY_ = Config::PLAYER_Y_BOOST;
+    isUp_ = false;
+  }
+
+  //учитываем гравитацию по у
+  speedY_ -= Config::PLAYER_Y_GRAVITY;
+
+  //учитываем гравитацию по х
+  if (speedX_ < 0.0)
+  {
+    speedX_ += Config::PLAYER_X_GRAVITY;
+  }
+  else if (speedX_ > 0.0)
+  {
+    speedX_ -= Config::PLAYER_X_GRAVITY;
+  }
+
+  //если скорость игрока слишком маленькая, то сбрасываем
+  if (std::abs(speedX_) < 0.01)
+  {
+    speedX_ = 0.0;
+  }
+
+  checkMaxSpeed();
+
+  //передвигаем игрока
+  moveBy(speedX_, -speedY_);
+
+  checkCollisionWithScene();
+}
+
 void Player::colliding()
 {
   QList<QGraphicsItem *> colliding_items = collidingItems(Qt::IntersectsItemBoundingRect);
@@ -125,8 +148,6 @@ void Player::colliding()
 
     if (typeid(* item) == typeid (Net))
     {
-      qDebug() << "Player colliding with Net " << speedX_ << " " << speedY_;
-
       if (speedX_ > 0.0)
       {
         setPos(((Config::SCREEN_WIDTH - Config::NET_WIDTH) / 2) - width_ - 1, y());
@@ -135,7 +156,6 @@ void Player::colliding()
       {
         setPos((Config::SCREEN_WIDTH + Config::NET_WIDTH) / 2 + 1, y());
       }
-
       speedX_ = 0.0;
     }
   }

@@ -35,6 +35,9 @@ private:
   QGraphicsView * view_;
   QTimer * timer_;
   Rules * rules_;
+
+  void setDefaultPositionPlayers();
+  void setDefaultPositionBall();
 };
 
 #endif // GAME_H

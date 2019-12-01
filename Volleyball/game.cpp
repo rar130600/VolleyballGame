@@ -1,6 +1,5 @@
 #include <game.h>
 
-#include <QDebug>
 #include <QBrush>
 #include <QGraphicsTextItem>
 
@@ -43,9 +42,8 @@ Game::Game() :
   tmpRulesText->setDefaultTextColor(Qt::red);
 
   //расставляем объекты
-  player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
-  player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
-  ball_->setPos(Config::SCREEN_WIDTH / 2 - Config::BALL_DIAMETER / 2, Config::SCREEN_HEIGHT / 4);
+  setDefaultPositionPlayers();
+  setDefaultPositionBall();
   net_->setPos((Config::SCREEN_WIDTH - Config::NET_WIDTH) / 2, Config::SCREEN_HEIGHT - Config::NET_HEIGHT);
   backgroundPause_->setRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
 
@@ -71,7 +69,6 @@ Game::Game() :
   connect(timer_, SIGNAL(timeout()), ball_, SLOT(tick()));
   connect(timer_, SIGNAL(timeout()), player1_, SLOT(tick()));
   connect(timer_, SIGNAL(timeout()), player2_, SLOT(tick()));
-  connect(timer_, SIGNAL(timeout()), rules_, SLOT(tick()));
 
   connect(ball_, SIGNAL(startCalc()), timer_, SLOT(stop()));
   connect(ball_, SIGNAL(stopCalc()), timer_, SLOT(start()));
@@ -94,40 +91,45 @@ void Game::tick()
 
 void Game::ballOnBottom(qreal x)
 {
-  player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
-  player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
+  setDefaultPositionPlayers();
 
+  //если мяч упал на правую площадку
   if (x > Config::SCREEN_WIDTH / 2)
   {
     ball_->resetSpeeds();
+    //устанавливаем мяч над левым игроком
     ball_->setPos(Config::SCREEN_WIDTH / 4 - Config::BALL_DIAMETER / 2, (Config::SCREEN_HEIGHT - Config::BALL_DIAMETER) / 2);
     rules_->increaseScorePlayer1();
   }
-  else
+  else //если - на левую
   {
     ball_->resetSpeeds();
+    //устанавливаем мяч над правым игроком
     ball_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, (Config::SCREEN_HEIGHT - Config::BALL_DIAMETER) / 2);
     rules_->increaseScorePlayer2();
   }
 
+  //если кто-то набрал выигрышное количество очков
   if (rules_->getScorePlayer1() >= Config::SCORE_FOR_WINNING || rules_->getScorePlayer2() >= Config::SCORE_FOR_WINNING)
   {
+    //если это левый игрок
     if (rules_->getScorePlayer1() >= Config::SCORE_FOR_WINNING)
     {
       rules_->setWhoWin(true);
     }
-    else
+    else //если - правый
     {
       rules_->setWhoWin(false);
     }
 
+    //ставим победную надпись в центр
     QGraphicsTextItem * tmpRulesText = rules_->getTextItemInfo();
     tmpRulesText->setPos(Config::SCREEN_WIDTH / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 5),
                          Config::SCREEN_HEIGHT / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 3));
 
     rules_->resetScore();
     ball_->resetSpeeds();
-    ball_->setPos(Config::SCREEN_WIDTH / 2 - Config::BALL_DIAMETER / 2, Config::SCREEN_HEIGHT / 4);
+    setDefaultPositionBall();
     timer_->setInterval(INT_MAX); //delay ~25 days
   }
   else
@@ -140,40 +142,55 @@ void Game::gameEvent(QKeyEvent * event, bool isPause)
 {
   switch (event->key())
   {
+  //Pause
   case Qt::Key_Escape:
+    //если паузу включили
     if (isPause)
     {
       scene_->addItem(backgroundPause_);
       rules_->setInfoText(QString("PAUSE"));
+      //устанавливаем надпись в центр
       QGraphicsTextItem * tmpRulesText = rules_->getTextItemInfo();
       tmpRulesText->setPos(Config::SCREEN_WIDTH / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 2.5),
                            Config::SCREEN_HEIGHT / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 3));
 
       timer_->setInterval(INT_MAX); //delay ~25 days
     }
-    else
+    else //если паузу выключили
     {
       scene_->removeItem(backgroundPause_);
       rules_->resetInfoText();
       timer_->setInterval(Config::TIME);
     }
     break;
+  //restart game
   case Qt::Key_Space:
     rules_->resetScore();
     rules_->resetInfoText();
     timer_->setInterval(Config::TIME);
+
+    //если в момент рестарта игры включена пауза
     if (isPause)
     {
       scene_->removeItem(backgroundPause_);
       scene_->resetIsPauseGame();
     }
 
-    player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
-    player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
-
+    setDefaultPositionPlayers();
     ball_->resetSpeeds();
-    ball_->setPos(Config::SCREEN_WIDTH / 2 - Config::BALL_DIAMETER / 2, Config::SCREEN_HEIGHT / 4);
+    setDefaultPositionBall();
 
     break;
   }
+}
+
+void Game::setDefaultPositionPlayers()
+{
+  player1_->setPos(Config::SCREEN_WIDTH / 4 - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
+  player2_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, Config::SCREEN_HEIGHT - Config::PLAYER_HEIGHT - Config::INDENT);
+}
+
+void Game::setDefaultPositionBall()
+{
+  ball_->setPos((Config::SCREEN_WIDTH - Config::BALL_DIAMETER) / 2, Config::SCREEN_HEIGHT / 4);
 }

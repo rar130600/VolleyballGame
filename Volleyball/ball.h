@@ -10,8 +10,6 @@ class Ball : public QObject, public QGraphicsEllipseItem
 public:
   Ball();
 
-  void move();
-  void colliding();
   void resetSpeeds();
 
 signals:
@@ -25,6 +23,11 @@ public slots:
 private:
   qreal speedX_, speedY_;
   std::size_t diameter_;
+
+  void move();
+  void colliding();
+  void checkMaxSpeed();
+  void checkCollisionWithScene();
 };
 
 #endif // BALL_H

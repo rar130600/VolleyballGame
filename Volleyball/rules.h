@@ -22,9 +22,6 @@ public:
   void setWhoWin(bool isPlayer1);
   void setInfoText(const QString & string);
 
-public slots:
-  void tick();
-
 private:
   std::size_t scorePlayer1_;
   std::size_t scorePlayer2_;

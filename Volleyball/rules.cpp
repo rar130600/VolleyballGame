@@ -95,11 +95,6 @@ void Rules::setInfoText(const QString & string)
   textItemInfo_->setPlainText(string);
 }
 
-void Rules::tick()
-{
-
-}
-
 void Rules::updateScore()
 {
   textItemScorePlayer1_->setPlainText(QString("Score: ") + QString::number(scorePlayer1_));
