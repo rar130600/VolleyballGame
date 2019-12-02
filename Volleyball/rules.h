@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsTextItem>
+#include <vector>
 
 class Rules : public QObject
 {
@@ -23,8 +24,9 @@ public:
   void setInfoText(const QString & string);
 
 private:
-  std::size_t scorePlayer1_;
-  std::size_t scorePlayer2_;
+  using vector_score = std::vector<std::size_t>;
+
+  vector_score scorePlayers_;
   QGraphicsTextItem * textItemScorePlayer1_;
   QGraphicsTextItem * textItemScorePlayer2_;
   QGraphicsTextItem * textItemInfo_;

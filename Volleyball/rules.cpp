@@ -5,8 +5,7 @@
 #include "config.h"
 
 Rules::Rules() :
-  scorePlayer1_(0),
-  scorePlayer2_(0),
+  scorePlayers_(2, 0),
   textItemScorePlayer1_(new QGraphicsTextItem()),
   textItemScorePlayer2_(new QGraphicsTextItem()),
   textItemInfo_(new QGraphicsTextItem())
@@ -23,14 +22,14 @@ Rules::Rules() :
 
 void Rules::increaseScorePlayer1()
 {
-  scorePlayer1_++;
+  scorePlayers_.at(0) += 1;
   //обновляем текст
   updateScore();
 }
 
 void Rules::increaseScorePlayer2()
 {
-  scorePlayer2_++;
+  scorePlayers_.at(1) += 1;
   //обновляем текст
   updateScore();
 }
@@ -52,19 +51,19 @@ QGraphicsTextItem * Rules::getTextItemInfo()
 
 std::size_t Rules::getScorePlayer1()
 {
-  return scorePlayer1_;
+  return scorePlayers_.at(0);
 }
 
 std::size_t Rules::getScorePlayer2()
 {
-  return scorePlayer2_;
+  return scorePlayers_.at(1);
 }
 
 void Rules::resetScore()
 {
   //сбрасывает счет
-  scorePlayer1_ = 0;
-  scorePlayer2_ = 0;
+  scorePlayers_.at(0) = 0;
+  scorePlayers_.at(1) = 0;
 
   //обновляем текст
   updateScore();
@@ -97,6 +96,6 @@ void Rules::setInfoText(const QString & string)
 
 void Rules::updateScore()
 {
-  textItemScorePlayer1_->setPlainText(QString("Score: ") + QString::number(scorePlayer1_));
-  textItemScorePlayer2_->setPlainText(QString("Score: ") + QString::number(scorePlayer2_));
+  textItemScorePlayer1_->setPlainText(QString("Score: ") + QString::number(scorePlayers_[0]));
+  textItemScorePlayer2_->setPlainText(QString("Score: ") + QString::number(scorePlayers_[1]));
 }

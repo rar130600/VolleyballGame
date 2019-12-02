@@ -102,16 +102,17 @@ void Ball::colliding()
     {
       auto * net = static_cast<Net *>(item);
 
+      //если мяч на уровне с сеткой
       if (y() + diameter_ - 5 > net->y())
       {
         //если мяч прилетел слева
-        if (speedX_ < 0)
-        {
-          setPos(net->x() + Config::NET_WIDTH + 10, y());
-        }
-        if (speedX_ > 0) //если - справа
+        if ( x() < item->x())
         {
           setPos(net->x() - diameter_ - 10, y());
+        }
+        else if (speedX_ <= 0.0 && x() > item->x()) //если - слева
+        {
+          setPos(net->x() + Config::NET_WIDTH + 10, y());
         }
       }
       else

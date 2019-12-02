@@ -146,11 +146,12 @@ void Player::colliding()
 
     if (typeid(* item) == typeid (Net))
     {
-      if (speedX_ > 0.0)
+      //если игрок слева сетки
+      if (speedX_ >= 0.0 && x() < item->x())
       {
         setPos(((Config::SCREEN_WIDTH - Config::NET_WIDTH) / 2) - width_ - 1, y());
       }
-      else if (speedX_ < 0.0)
+      else if (speedX_ <= 0.0 && x() > item->x()) //если справа сетки
       {
         setPos((Config::SCREEN_WIDTH + Config::NET_WIDTH) / 2 + 1, y());
       }

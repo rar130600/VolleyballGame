@@ -34,8 +34,8 @@ Game::Game() :
   imagePlayer1.load(":/images/resource/newPlayer1.png");
   imagePlayer2.load(":/images/resource/newPlayer2.png");
 
-  player1_->setPixmap(imagePlayer1.scaled(Config::PLAYER_WIDTH, Config::PLAYER_HEIGHT, Qt::KeepAspectRatio));
-  player2_->setPixmap(imagePlayer2.scaled(Config::PLAYER_WIDTH, Config::PLAYER_HEIGHT, Qt::KeepAspectRatio));
+  player1_->setPixmap(imagePlayer1.scaled(static_cast<int>(Config::PLAYER_WIDTH), static_cast<int>(Config::PLAYER_HEIGHT), Qt::KeepAspectRatio));
+  player2_->setPixmap(imagePlayer2.scaled(static_cast<int>(Config::PLAYER_WIDTH), static_cast<int>(Config::PLAYER_HEIGHT), Qt::KeepAspectRatio));
 
   net_->setBrush(QBrush(Qt::gray));
   backgroundPause_->setBrush(QBrush(Qt::black));
