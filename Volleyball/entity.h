@@ -12,9 +12,7 @@ public:
 public slots:
   virtual void tick() = 0;
 
-private:
-  qreal speedX_, speedY_;
-
+protected:
   virtual void move() = 0;
   virtual void colliding() = 0;
   virtual void checkMaxSpeed() = 0;

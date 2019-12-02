@@ -1,8 +1,6 @@
 #include <QApplication>
 
 #include <game.h>
-#include <player.h>
-#include <ball.h>
 
 int main(int argc, char * argv[])
 {

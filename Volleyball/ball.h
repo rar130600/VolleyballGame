@@ -13,8 +13,6 @@ public:
   void resetSpeeds();
 
 signals:
-  void startCalc();
-  void stopCalc();
   void ballOnBottom(qreal x);
 
 public slots:
@@ -24,6 +22,7 @@ private:
   qreal speedX_, speedY_;
   std::size_t diameter_;
 
+protected:
   void move() override;
   void colliding() override;
   void checkMaxSpeed() override;

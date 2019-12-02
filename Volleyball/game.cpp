@@ -78,8 +78,6 @@ Game::Game() :
   connect(timer_, SIGNAL(timeout()), player1_, SLOT(tick()));
   connect(timer_, SIGNAL(timeout()), player2_, SLOT(tick()));
 
-  connect(ball_, SIGNAL(startCalc()), timer_, SLOT(stop()));
-  connect(ball_, SIGNAL(stopCalc()), timer_, SLOT(start()));
   connect(ball_, SIGNAL(ballOnBottom(qreal)), this, SLOT(ballOnBottom(qreal)));
 
   connect(scene_, SIGNAL(gameEvent(QKeyEvent *, bool)), this, SLOT(gameEvent(QKeyEvent *, bool)));

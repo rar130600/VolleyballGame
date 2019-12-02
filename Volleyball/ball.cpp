@@ -134,12 +134,8 @@ void Ball::resetSpeeds()
 
 void Ball::tick()
 {
-  emit startCalc();
-
   colliding();
   move();
-
-  emit stopCalc();
 }
 
 void Ball::checkMaxSpeed()

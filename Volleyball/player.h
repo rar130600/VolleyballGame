@@ -26,6 +26,7 @@ private:
   qreal speedX_, speedY_;
   bool isRight_, isLeft_, isUp_;
 
+protected:
   void move() override;
   void colliding() override;
   void checkMaxSpeed() override;
