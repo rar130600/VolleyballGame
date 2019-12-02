@@ -27,6 +27,7 @@ SOURCES += \
 HEADERS += \
   ball.h \
   config.h \
+  entity.h \
   game.h \
   net.h \
   player.h \

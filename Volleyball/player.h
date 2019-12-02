@@ -1,11 +1,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
+#include <entity.h>
 
-class Player : public QObject, public QGraphicsPixmapItem
+class Player : public Entity, public QGraphicsPixmapItem
 {
   Q_OBJECT
 public:
@@ -17,7 +17,7 @@ public:
   void setSpeedY(qreal speedY);
 
 public slots:
-  void tick();
+  void tick() override;
   void keyPress(QKeyEvent * event);
   void keyRelease(QKeyEvent * event);
 
@@ -26,10 +26,10 @@ private:
   qreal speedX_, speedY_;
   bool isRight_, isLeft_, isUp_;
 
-  void move();
-  void colliding();
-  void checkMaxSpeed();
-  void checkCollisionWithScene();
+  void move() override;
+  void colliding() override;
+  void checkMaxSpeed() override;
+  void checkCollisionWithScene() override;
 };
 
 #endif // PLAYER_H

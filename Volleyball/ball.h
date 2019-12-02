@@ -2,9 +2,9 @@
 #define BALL_H
 
 #include <QGraphicsPixmapItem>
-#include <QObject>
+#include "entity.h"
 
-class Ball : public QObject, public QGraphicsPixmapItem
+class Ball : public Entity, public QGraphicsPixmapItem
 {
   Q_OBJECT
 public:
@@ -18,16 +18,16 @@ signals:
   void ballOnBottom(qreal x);
 
 public slots:
-  void tick();
+  void tick() override;
 
 private:
   qreal speedX_, speedY_;
   std::size_t diameter_;
 
-  void move();
-  void colliding();
-  void checkMaxSpeed();
-  void checkCollisionWithScene();
+  void move() override;
+  void colliding() override;
+  void checkMaxSpeed() override;
+  void checkCollisionWithScene() override;
 };
 
 #endif // BALL_H
