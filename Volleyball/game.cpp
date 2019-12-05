@@ -1,9 +1,12 @@
-#include <game.h>
+ #include <game.h>
 
 #include <QBrush>
 #include <QGraphicsTextItem>
 #include <QPixmap>
 #include <QImage>
+#include <algorithm>
+
+#include <QDebug>
 
 #include "config.h"
 
@@ -12,11 +15,15 @@ Game::Game() :
   player1_(new Player()),
   player2_(new Player()),
   net_(new Net()),
-  backgroundPause_(new QGraphicsRectItem ()),
+  backgroundPause_(new QGraphicsRectItem()),
+  backgroundTable_(new QGraphicsRectItem()),
   scene_(new SceneForGame(player1_, player2_)),
   view_(new QGraphicsView(scene_)),
   timer_(new QTimer()),
-  rules_(new Rules())
+  rules_(new Rules()),
+  timeScore_(),
+  textScoreTime_(new QGraphicsTextItem()),
+  tableInScene_(false)
 {
   //устанавливаем размеры окна
   view_->setFixedSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
@@ -40,6 +47,8 @@ Game::Game() :
   net_->setBrush(QBrush(Qt::gray));
   backgroundPause_->setBrush(QBrush(Qt::black));
   backgroundPause_->setOpacity(0.5);
+  backgroundTable_->setBrush(QBrush(Qt::yellow));
+  backgroundTable_->setOpacity(0.7);
 
   QGraphicsTextItem * tmpRulesText;
   tmpRulesText = rules_->getTextItemScorePlayer1();
@@ -48,12 +57,15 @@ Game::Game() :
   tmpRulesText->setDefaultTextColor(Qt::blue);
   tmpRulesText = rules_->getTextItemInfo();
   tmpRulesText->setDefaultTextColor(Qt::red);
+  textScoreTime_->setFont(QFont("Helvetica", Config::TEXT_SIZE_SCORE));
 
   //расставляем объекты
   setDefaultPositionPlayers();
   setDefaultPositionBall();
   net_->setPos((Config::SCREEN_WIDTH - Config::NET_WIDTH) / 2, Config::SCREEN_HEIGHT - Config::NET_HEIGHT);
-  backgroundPause_->setRect(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
+  backgroundPause_->setRect(0.0, 0.0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
+  backgroundTable_->setRect(0.0, 0.0, 300.0, 300.0);
+  backgroundTable_->setPos(Config::SCREEN_WIDTH / 2 - 160, Config::SCREEN_HEIGHT / 2 - 45);
 
   tmpRulesText = rules_->getTextItemScorePlayer1();
   tmpRulesText->setPos(Config::INDENT, 0.0);
@@ -62,11 +74,15 @@ Game::Game() :
   tmpRulesText = rules_->getTextItemInfo();
   tmpRulesText->setPos(Config::SCREEN_WIDTH / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 5),
                        Config::SCREEN_HEIGHT / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 3));
+  textScoreTime_->setPos(Config::SCREEN_WIDTH / 2 + (textScoreTime_->textWidth() * Config::TEXT_SIZE_SCORE * 6),
+                           Config::SCREEN_HEIGHT / 2 - 50);
+
 
   //добавляем объекты на сцену
   scene_->addItem(ball_);
   scene_->addItem(player1_);
   scene_->addItem(player2_);
+  //scene_->addItem(player3_);
   scene_->addItem(net_);
   scene_->addItem(rules_->getTextItemScorePlayer1());
   scene_->addItem(rules_->getTextItemScorePlayer2());
@@ -106,6 +122,7 @@ void Game::ballOnBottom(qreal x)
     //устанавливаем мяч над левым игроком
     ball_->setPos(Config::SCREEN_WIDTH / 4 - Config::BALL_DIAMETER / 2, (Config::SCREEN_HEIGHT - Config::BALL_DIAMETER) / 2);
     rules_->increaseScorePlayer1();
+    timeScore_.insert(std::pair<QTime, std::string>(QTime::currentTime(), "player 1"));
   }
   else //если - на левую
   {
@@ -113,6 +130,7 @@ void Game::ballOnBottom(qreal x)
     //устанавливаем мяч над правым игроком
     ball_->setPos(3 * (Config::SCREEN_WIDTH / 4) - Config::PLAYER_WIDTH / 2, (Config::SCREEN_HEIGHT - Config::BALL_DIAMETER) / 2);
     rules_->increaseScorePlayer2();
+    timeScore_.insert(std::pair<QTime, std::string>(QTime::currentTime(), "player 2"));
   }
 
   //если кто-то набрал выигрышное количество очков
@@ -132,6 +150,18 @@ void Game::ballOnBottom(qreal x)
     QGraphicsTextItem * tmpRulesText = rules_->getTextItemInfo();
     tmpRulesText->setPos(Config::SCREEN_WIDTH / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 5),
                          Config::SCREEN_HEIGHT / 2 + (tmpRulesText->textWidth() * Config::TEXT_SIZE_INFO * 3));
+
+    QString line;
+    std::for_each(timeScore_.begin(), timeScore_.end(), [&](const std::pair<QTime, std::string> & i) {
+      line += QString(i.first.toString() + "  " + i.second.c_str() + "\n");
+    });
+
+    textScoreTime_->setPlainText(line);
+    backgroundTable_->setRect(0.0, 0.0, 300.0, 45.0 * timeScore_.size());
+
+    scene_->addItem(backgroundTable_);
+    scene_->addItem(textScoreTime_);
+    tableInScene_ = true;
 
     rules_->resetScore();
     ball_->resetSpeeds();
@@ -165,6 +195,13 @@ void Game::gameEvent(QKeyEvent * event, bool isPause)
     else //если паузу выключили
     {
       scene_->removeItem(backgroundPause_);
+
+      if (tableInScene_)
+      {
+        scene_->removeItem(backgroundTable_);
+        scene_->removeItem(textScoreTime_);
+        tableInScene_ = false;
+      }
       rules_->resetInfoText();
       timer_->setInterval(Config::TIME);
     }
@@ -180,6 +217,12 @@ void Game::gameEvent(QKeyEvent * event, bool isPause)
     {
       scene_->removeItem(backgroundPause_);
       scene_->resetIsPauseGame();
+    }
+    if (tableInScene_)
+    {
+      scene_->removeItem(backgroundTable_);
+      scene_->removeItem(textScoreTime_);
+      tableInScene_ = false;
     }
 
     setDefaultPositionPlayers();

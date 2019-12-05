@@ -44,10 +44,12 @@ void Player::keyRelease(QKeyEvent * event)
   {
   case Qt::Key_Left:
   case Qt::Key_A:
+  case Qt::Key_J:
     isLeft_ = false;
     break;
   case Qt::Key_Right:
   case Qt::Key_D:
+  case Qt::Key_L:
     isRight_ = false;
     break;
   }

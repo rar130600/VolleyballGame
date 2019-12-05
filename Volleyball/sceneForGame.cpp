@@ -22,13 +22,11 @@ void SceneForGame::keyPressEvent(QKeyEvent * event)
   case Qt::Key_Left:
   case Qt::Key_Right:
   case Qt::Key_Up:
-  case Qt::Key_Down:
     emit keyPressPlayer2(event);
     break;
   case Qt::Key_A:
   case Qt::Key_D:
   case Qt::Key_W:
-  case Qt::Key_S:
     emit keyPressPlayer1(event);
     break;
   case Qt::Key_Escape:

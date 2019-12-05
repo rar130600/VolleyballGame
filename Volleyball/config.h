@@ -13,7 +13,7 @@ namespace Config
   constexpr static std::size_t SCREEN_WIDTH = 1200;
   constexpr static std::size_t SCREEN_HEIGHT = 900;
 
-  constexpr static std::size_t SCORE_FOR_WINNING = 5;
+  constexpr static std::size_t SCORE_FOR_WINNING = 1;
 
   constexpr static std::size_t TEXT_SIZE_SCORE = 24;
   constexpr static std::size_t TEXT_SIZE_INFO = 36;
